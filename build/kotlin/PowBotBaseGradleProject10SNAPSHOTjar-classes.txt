@@ -1,0 +1,1 @@
+C:\Users\La Capela\Powbot-Gradle-Script\build\classes\java\main\SampleScript.class
