@@ -10,10 +10,10 @@ import org.powbot.api.script.*;
 
 public class SampleScript extends AbstractScript {
 
-    private String GuiNPC; // Creates an empty
+    private String GuiNPC; // Creates an empty Logic to happen before poll() starts
     @Override
     public void onStart() {
-        // Logic to happen before poll() starts
+        
         boolean GuiNPC = getOption("NPC"); // Gets value of specific GUI key and saves it in a variable.
     }
 
