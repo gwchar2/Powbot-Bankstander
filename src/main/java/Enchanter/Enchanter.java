@@ -1,3 +1,4 @@
+package Enchanter;
 import org.powbot.api.Condition;
 import org.powbot.api.rt4.*;
 import org.powbot.api.script.*;
@@ -8,7 +9,7 @@ import org.powbot.api.script.*;
 @ScriptManifest(name = "Example Script", description = "Example Script", version = "1")
 
 
-public class SampleScript extends AbstractScript {
+public class Enchanter extends AbstractScript {
 
     private String GuiNPC; // Creates an empty Logic to happen before poll() starts
     @Override
@@ -31,6 +32,6 @@ public class SampleScript extends AbstractScript {
 
     public static void main(String[] args) {
         // Start your script with this function. Make sure your device is connected via ADB, and only one is connected
-        new SampleScript().startScript();
+        new Enchanter().startScript();
     }
 }

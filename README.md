@@ -5,8 +5,9 @@ First Powbot Script using Gradle
 
 ### Powbot API
 https://docs.powbot.org/jdocs/app/org.powbot.api.action/index.html
+https://docs.powbot.org/#/
 
-### OSbot API
+### OSbot API   
 https://osbot.org/api/
 
 ### Devious API
