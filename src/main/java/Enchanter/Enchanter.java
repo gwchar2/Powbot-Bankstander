@@ -1,21 +1,24 @@
 package Enchanter;
-import org.powbot.api.Condition;
-import org.powbot.api.rt4.*;
-import org.powbot.api.script.*;
 
-// Example of GUI option which asks for a string
-@ScriptConfiguration(name = "NPC", description = "NPC to fight", optionType = OptionType.STRING)
-@ScriptConfiguration(name = "Example GUI option", description = "Example GUI option", optionType = OptionType.STRING, visible = false)
-@ScriptManifest(name = "Example Script", description = "Example Script", version = "1")
+import org.powbot.api.script.AbstractScript;
+import org.powbot.api.script.ScriptCategory;
+import org.powbot.api.script.ScriptConfiguration;
+import org.powbot.api.script.ScriptManifest;
 
+@ScriptManifest(name = "Open Enchanter", description = "Enchants bolts and items", version = "1.0.1", category = ScriptCategory.Magic, author = "Great Mental", markdownFileName = "README.md")
+
+@ScriptConfiguration.List({
+        @ScriptConfiguration(name = "Enchant Type", description = "Type of enchant to cast", allowedValues = {
+                "Bolt", "Level 1", "Level 2", "Level 3", "Level 4", "Level 5", "Level 6", "Level 7" }, visible = true),
+        @ScriptConfiguration(name = "Item to Enchant", description = "Type of item to enchant", visible = true),
+})
 
 public class Enchanter extends AbstractScript {
 
-    private String GuiNPC; // Creates an empty Logic to happen before poll() starts
     @Override
     public void onStart() {
-        
-        boolean GuiNPC = getOption("NPC"); // Gets value of specific GUI key and saves it in a variable.
+        // Logic to happen before poll() starts
+
     }
 
     @Override
@@ -24,14 +27,9 @@ public class Enchanter extends AbstractScript {
 
     }
 
-
-    @ValueChanged(keyName = "NPC") // Listens for changes to the specific GUI config key.
-    private void exampleConfigChanged(Boolean valueChanged) {
-        updateVisibility("Example GUI option", true); // Changes visibility of the second GUI config key if another key is modified
-    }
-
     public static void main(String[] args) {
-        // Start your script with this function. Make sure your device is connected via ADB, and only one is connected
+        // Start your script with this function. Make sure your device is connected via
+        // ADB, and only one is connected
         new Enchanter().startScript();
     }
 }

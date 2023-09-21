@@ -3,7 +3,7 @@ package Enchanter.Data;
 import org.powbot.api.rt4.Magic;
 import org.powbot.api.rt4.Magic.Spell;
 
-public enum EnchantType{
+public enum EnchantType {
     BOLT(Magic.Spell.ENCHANT_CROSSBOW_BOLT),
     Level_1(Magic.Spell.ENCHANT_LEVEL_1_JEWELLERY),
     LEVEL_2(Magic.Spell.ENCHANT_LEVEL_2_JEWELLERY),
@@ -18,9 +18,9 @@ public enum EnchantType{
     EnchantType(Spell spell) {
         this.spell = spell;
     }
-    
-    public Spell getSpell(){
+
+    public Spell getSpell() {
         return spell;
     }
-}
 
+}
