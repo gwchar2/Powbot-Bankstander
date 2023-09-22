@@ -23,12 +23,13 @@ public enum CrossbowBolt implements Enchantable {
     DRAGONSTONE_DRAGON(ItemLoader.lookup("Dragonstone dragon bolts").id(), ItemLoader.lookup("Dragonstone dragon bolts (e)").id(), 68),
     ONYX(ItemLoader.lookup("Onyx bolts").id(), ItemLoader.lookup("Onyx bolts (e)").id(), 87),
     ONYX_DRAGON(ItemLoader.lookup("Onyx dragon bolts").id(), ItemLoader.lookup("Onyx dragon bolts (e)").id(), 87);
-    ;
+    
 
     private final int unenchantedID;
     private final int enchantedID;
     private final int levelReq;
-    
+
+
     CrossbowBolt(int unenchantedID, int enchantedID, int levelReq){
         this.unenchantedID = unenchantedID;
         this.enchantedID = enchantedID;
@@ -46,5 +47,7 @@ public enum CrossbowBolt implements Enchantable {
     public int getLevelReq() {
         return levelReq;
     }
+
+  
 }
 

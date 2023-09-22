@@ -1,4 +1,7 @@
 package Enchanter;
-public class EnchanterConfig {
-    
+
+
+public interface EnchanterConfig {
+
+
 }

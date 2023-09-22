@@ -1,5 +1,7 @@
 package Enchanter.Data;
 
+
+
 import org.powbot.mobile.rscache.loader.ItemLoader;
 
 public enum  Level_1 implements Enchantable {
@@ -15,6 +17,7 @@ public enum  Level_1 implements Enchantable {
     private int unenchantedID;
     private int enchantedID;
     private int levelReq;
+
 
     Level_1(int unenchantedID, int enchantedID, int levelReq){
         this.unenchantedID = unenchantedID;
@@ -33,4 +36,6 @@ public enum  Level_1 implements Enchantable {
     public int getLevelReq(){
         return levelReq;
     }
+
+
 }

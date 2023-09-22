@@ -12,6 +12,7 @@ public enum Level_4 implements Enchantable{
     private int enchantedID;
     private int levelReq;
 
+
     Level_4(int unenchantedID, int enchantedID, int levelReq){
         this.unenchantedID = unenchantedID;
         this.enchantedID = enchantedID;
@@ -29,5 +30,7 @@ public enum Level_4 implements Enchantable{
     public int getLevelReq(){
         return levelReq;
     }
+
+
 }
 

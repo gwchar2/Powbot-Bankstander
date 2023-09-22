@@ -29,5 +29,7 @@ public enum Level_6 implements Enchantable{
     public int getLevelReq(){
         return levelReq;
     }
+
+ 
 }
 
