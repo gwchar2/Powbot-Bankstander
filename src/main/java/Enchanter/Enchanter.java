@@ -42,7 +42,7 @@ import org.powbot.api.script.ValueChanged;
 
 
 public class Enchanter extends AbstractScript {
-/** 
+
     @ValueChanged(keyName = "Method")
     public void methodUpdated(String newMethod) {
        switch(newMethod){
@@ -100,7 +100,7 @@ public class Enchanter extends AbstractScript {
 
        
     }
-*/
+
 
     @Override
     public void onStart() {
