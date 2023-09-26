@@ -1,11 +1,14 @@
 package Enchanter;
 
+import org.powbot.api.rt4.Magic.Spell;
 import org.powbot.api.script.AbstractScript;
 import org.powbot.api.script.OptionType;
 import org.powbot.api.script.ScriptCategory;
 import org.powbot.api.script.ScriptConfiguration;
 import org.powbot.api.script.ScriptManifest;
 import org.powbot.api.script.ValueChanged;
+import java.lang.reflect.Field;
+import Enchanter.Data.EnchantType;
 
 @ScriptManifest(name = "Open Enchanter", description = "Enchants bolts and items", version = "1.0.1", category = ScriptCategory.Magic, author = "Great Mental", markdownFileName = "README.md")
 
@@ -13,15 +16,55 @@ import org.powbot.api.script.ValueChanged;
         @ScriptConfiguration(name = "Method", description = "Type of enchant to cast", allowedValues = { "BOLT",
                 "LEVEL_1", "LEVEL_2", "LEVEL_3", "LEVEL_4", "LEVEL_5", "LEVEL_6", "LEVEL_7" }, visible = true),
         @ScriptConfiguration(name = "Item to Enchant", description = "What item do you want to enchant", allowedValues = {
-                "Please choose a method!" }, visible = true),
+                "ONYX_DRAGON", "ONYX", "DRAGONSTONE_DRAGON", "DRAGONSTONE",
+                "DIAMOND_DRAGON", "DIAMOND", "RUBY_DRAGON", "RUBY",
+                "TOPAZ_DRAGON", "TOPAZ", "EMERALD_DRAGON", "EMERALD", "PEARL_DRAGON", "PEARL", "JADE_DRAGON",
+                "JADE", "SAPPHIRE_DRAGON", "SAPPHIRE", "OPAL_DRAGON", "OPAL" }, visible = true),
         @ScriptConfiguration(name = "Level to stop", description = "Stops when reaches this level", optionType = OptionType.INTEGER, visible = true, defaultValue = "99"),
 })
 
+/**
+ * Enum<?> selectedEnum = (Enum<?>) field.get(null);
+ * int unenchantedID = ((Enchantable) selectedEnum).getUnenchantedID();
+ * int enchantedID = ((Enchantable) selectedEnum).getEnchantedID();
+ * int levelReq = ((Enchantable) selectedEnum).getLevelReq();
+ */
 public class Enchanter extends AbstractScript {
+    protected Spell spell;
+    protected Class<?> itemToCast;
+    private String className; // User input for class name
+    private String enumConstantName; // User input for enum constant name
+
+    @Override
+    public void onStart() {
+        className = getOption("Method");
+        enumConstantName = getOption("Item To Enchant");
+        spell = EnchantType.valueOf(getOption("Method")).getSpell();
+        try {
+            Class<?> clazz = Class.forName("Enchanter.Data." + className);
+            Field field = clazz.getField(enumConstantName);
+            Enum<?> selectedEnum = (Enum<?>) field.get(null);
+
+            // Print the information
+            // ("Selected Enum: " + selectedEnum);
+            // ("Unenchanted ID: " + unenchantedID);
+            // ("Enchanted ID: " + enchantedID);
+            // ("Level Requirement: " + levelReq);
+        } catch (ClassNotFoundException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException
+                | SecurityException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void poll() {
+        // Looped tasks go here. Example below is of a simple fighter script
+
+    }
 
     @ValueChanged(keyName = "Method")
     public void methodUpdated(String newMethod) {
-        if (newMethod.equals("BOLTS")) {
+        if (newMethod.equals("BOLT")) {
             String[] CrossbowBoltList = { "ONYX_DRAGON", "ONYX", "DRAGONSTONE_DRAGON", "DRAGONSTONE",
                     "DIAMOND_DRAGON", "DIAMOND", "RUBY_DRAGON", "RUBY",
                     "TOPAZ_DRAGON", "TOPAZ", "EMERALD_DRAGON", "EMERALD", "PEARL_DRAGON", "PEARL", "JADE_DRAGON",
@@ -66,18 +109,6 @@ public class Enchanter extends AbstractScript {
                     "ZENYTE_RING", "ZENYTE_BRACELET", "ZENYTE_NECKLACE", "ZENYTE_AMULET" };
             updateAllowedOptions("Item to Enchant", Level_7List);
         }
-    }
-
-    @Override
-    public void onStart() {
-        // EnchantType method = getOption("Enchant Type");
-
-    }
-
-    @Override
-    public void poll() {
-        // Looped tasks go here. Example below is of a simple fighter script
-
     }
 
     public static void main(String[] args) {
