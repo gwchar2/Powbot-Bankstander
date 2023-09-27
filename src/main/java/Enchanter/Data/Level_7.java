@@ -1,7 +1,6 @@
 package Enchanter.Data;
 
 import org.powbot.mobile.rscache.loader.ItemLoader;
-
 public enum Level_7 implements Enchantable{
     ZENYTE_RING(ItemLoader.lookup("Zenyte ring").id(), ItemLoader.lookup("Ring of suffering").id(), 93),
     ZENYTE_BRACELET(ItemLoader.lookup("Zenyte bracelet").id(), ItemLoader.lookup("Necklace of anguish").id(), 93),
