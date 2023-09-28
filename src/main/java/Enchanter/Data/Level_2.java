@@ -3,18 +3,18 @@ package Enchanter.Data;
 import org.powbot.mobile.rscache.loader.ItemLoader;
 
 public enum Level_2 implements Enchantable{
-    EMERALD_RING(ItemLoader.lookup("Emerald ring").id(),ItemLoader.lookup("Ring of dueling").id(), 27),
-    EMERALD_BRACELET(ItemLoader.lookup("Emerald bracelet").id(), ItemLoader.lookup("Castle wars bracelet").id(), 27),
-    EMERALD_NECKLACE(ItemLoader.lookup("Emerald necklace").id(),ItemLoader.lookup("Binding necklace").id(), 27),
-    EMERALD_AMULET(ItemLoader.lookup("Emerald amulet").id(), ItemLoader.lookup("Amulet of defence").id(), 27),
-    JADE_RING(ItemLoader.lookup("Jade ring").id(),ItemLoader.lookup("Ring of returning").id(), 27),
-    JADE_BRACELET(ItemLoader.lookup("Jade bracelet").id(),ItemLoader.lookup("Flamtaer bracelet").id(), 27),
-    JADE_NECKLACE(ItemLoader.lookup("Jade necklace").id(), ItemLoader.lookup("Necklace of passage").id(), 27),
-    JADE_AMULET(ItemLoader.lookup("Jade amulet").id(), ItemLoader.lookup("Amulet of chemistry").id(), 27);
+    EMERALD_RING(1639 ,2552 , 27),
+    EMERALD_BRACELET(11076 ,11079  , 27),
+    EMERALD_NECKLACE(1658 ,5521 , 27),
+    EMERALD_AMULET(1696 ,1729 , 27),
+    JADE_RING(21084 ,21129  , 27),
+    JADE_BRACELET(21120 ,21180  , 27),
+    JADE_NECKLACE(21093  ,21146 , 27),
+    JADE_AMULET(21102  , 21163  , 27);
 
-    private int unenchantedID;
-    private int enchantedID;
-    private int levelReq;
+    private final int unenchantedID;
+    private final int enchantedID;
+    private final int levelReq;
 
 
     Level_2(int unenchantedID, int enchantedID, int levelReq){

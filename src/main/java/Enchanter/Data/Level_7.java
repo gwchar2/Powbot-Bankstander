@@ -1,15 +1,14 @@
 package Enchanter.Data;
 
-import org.powbot.mobile.rscache.loader.ItemLoader;
 public enum Level_7 implements Enchantable{
-    ZENYTE_RING(ItemLoader.lookup("Zenyte ring").id(), ItemLoader.lookup("Ring of suffering").id(), 93),
-    ZENYTE_BRACELET(ItemLoader.lookup("Zenyte bracelet").id(), ItemLoader.lookup("Necklace of anguish").id(), 93),
-    ZENYTE_NECKLACE(ItemLoader.lookup("Zenyte necklace").id(), ItemLoader.lookup("Tormented bracelet").id(), 93),
-    ZENYTE_AMULET(ItemLoader.lookup("Zenyte amulet").id(), ItemLoader.lookup("Amulet of torture").id(), 93);
+    ZENYTE_RING(19538  ,19550 , 93),
+    ZENYTE_BRACELET(19492 ,19547 , 93),
+    ZENYTE_NECKLACE(19535  ,19544 , 93),
+    ZENYTE_AMULET(19541  ,19553  , 93);
 
-    private int unenchantedID;
-    private int enchantedID;
-    private int levelReq;
+    private final int unenchantedID;
+    private final int enchantedID;
+    private final int levelReq;
 
 
     Level_7(int unenchantedID, int enchantedID, int levelReq){

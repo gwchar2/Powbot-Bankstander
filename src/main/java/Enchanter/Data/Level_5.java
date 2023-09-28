@@ -3,14 +3,14 @@ package Enchanter.Data;
 import org.powbot.mobile.rscache.loader.ItemLoader;
 
 public enum Level_5 implements Enchantable{
-    DRAGONSTONE_RING(ItemLoader.lookup("Dragonstone ring").id(), ItemLoader.lookup("Ring of wealth").id(), 68),
-    DRAGONSTONE_BRACELET(ItemLoader.lookup("Dragonstone bracelet").id(), ItemLoader.lookup("Skills necklace").id(), 68),
-    DRAGONSTONE_NECKLACE(ItemLoader.lookup("Dragonstone necklace").id(), ItemLoader.lookup("Combat bracelet").id(), 68),
-    DRAGONSTONE_AMULET(ItemLoader.lookup("Dragonstone amulet").id(), ItemLoader.lookup("Amulet of glory").id(), 68);
+    DRAGONSTONE_RING(1645  ,11980 , 68),
+    DRAGONSTONE_BRACELET(11115 ,11118  , 68),
+    DRAGONSTONE_NECKLACE(1664  ,11105 , 68),
+    DRAGONSTONE_AMULET(1702  ,1704 , 68);
 
-    private int unenchantedID;
-    private int enchantedID;
-    private int levelReq;
+    private final int unenchantedID;
+    private final int enchantedID;
+    private final int levelReq;
 
 
     Level_5(int unenchantedID, int enchantedID, int levelReq){

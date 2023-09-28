@@ -1,6 +1,7 @@
 package Enchanter;
 
-import Enchanter.Data.Enchantable;
+import Enchanter.Data.Level_1;
+import org.powbot.api.Area;
 import org.powbot.api.requirement.Requirement;
 import org.powbot.api.rt4.Equipment;
 import org.powbot.api.rt4.Item;
@@ -13,10 +14,12 @@ import org.powbot.api.script.ScriptCategory;
 import org.powbot.api.script.ScriptConfiguration;
 import org.powbot.api.script.ScriptManifest;
 import org.powbot.api.script.ValueChanged;
-import java.lang.reflect.Field;
+
 import Enchanter.Data.EnchantType;
+
+import java.sql.Date;
 import java.util.List;
-import org.powbot.mobile.script.ScriptManager;
+import java.util.Optional;
 
 @ScriptManifest(name = "Open Enchanter",
         description = "Enchants bolts and items",
@@ -26,13 +29,13 @@ import org.powbot.mobile.script.ScriptManager;
         markdownFileName = "README.md")
 
 @ScriptConfiguration.List({
-        @ScriptConfiguration(name = "Method", description = "Type of enchant to cast", allowedValues = { "BOLT",
+        @ScriptConfiguration(name = "Method", description = "Type of enchant to cast", allowedValues = { " ","BOLT",
                 "LEVEL_1", "LEVEL_2", "LEVEL_3", "LEVEL_4", "LEVEL_5", "LEVEL_6", "LEVEL_7" }),
         @ScriptConfiguration(name = "Item to Enchant", description = "What item do you want to enchant", allowedValues = {
                 "ONYX_DRAGON", "ONYX", "DRAGONSTONE_DRAGON", "DRAGONSTONE",
                 "DIAMOND_DRAGON", "DIAMOND", "RUBY_DRAGON", "RUBY",
                 "TOPAZ_DRAGON", "TOPAZ", "EMERALD_DRAGON", "EMERALD", "PEARL_DRAGON", "PEARL", "JADE_DRAGON",
-                "JADE", "SAPPHIRE_DRAGON", "SAPPHIRE", "OPAL_DRAGON", "OPAL" }),
+                "JADE", "SAPPHIRE_DRAGON", "SAPPHIRE", "OPAL_DRAGON", "OPAL" }, visible = false),
         @ScriptConfiguration(name = "Level to stop", description = "Stops when reaches this level",
                 optionType = OptionType.INTEGER, defaultValue = "99"),
         @ScriptConfiguration(name = "Where to enchant", description = "Bankstands here",
@@ -40,18 +43,27 @@ import org.powbot.mobile.script.ScriptManager;
 })
 
 
-public class Enchanter extends AbstractScript {
-    protected String className; // User input for class name
-    protected String enumConstantName; // User input for enum constant name
-    protected Spell mySpell;
-    protected int unenchantedItemID;
-    protected int enchantedItemID;
-    protected int levelReq;
-    protected int maxLevel;
+public class Enchanter extends AbstractScript{
+    protected static String className; // User input for class name
+    protected static String enumConstantName; // User input for enum constant name
+    protected static Spell mySpell;
+    protected static int unenchantedItemID;
+    protected static int enchantedItemID;
+    protected static int levelReq;
+    protected static int maxLevel;
+    protected static String chosenBank;
+    protected Area chosenBankArea;
     @Override
     public void onStart() {
-        extractConfig(); //extracts the config
-        checkRequirements();
+        String name = getOption("Method");
+        String testname2 = getOption("Item To Enchant");
+        System.out.println(name +" "+ testname2);
+        ConfigHandler.extractConfig(getOption("Method"),getOption("Item To Enchant"),getOption("Level to stop"),EnchantType.valueOf(getOption("Method")).getSpell(),
+                getOption("Where to enchant"));
+       // checkRequirements();
+        System.out.println(mySpell+" "+unenchantedItemID+" "+enchantedItemID+" "+levelReq+" "+maxLevel+" "+chosenBank);
+
+
         //check if in bank area (one of the config banks)
         //if not, teleport / make new path to go there
         //if there, make sure at correct tile.
@@ -66,39 +78,15 @@ public class Enchanter extends AbstractScript {
     @Override
     public void poll() {
 
-
     }
 
     public void checkRequirements(){
         if (Skill.Magic.realLevel() > levelReq ||  Magic.Book.MODERN.name().compareTo(Magic.book().name()) > 0 || Skill.Magic.realLevel() > maxLevel) {
-            ScriptManager.INSTANCE.stop();
-            return;
+            System.out.println("False");
         }
-        List<Requirement> requiredItems = mySpell.requirements();
-        Item equippedWeapon = Equipment.itemAt(Equipment.Slot.MAIN_HAND);
+        //List<Requirement> requiredItems = mySpell.requirements();
+        //Item equippedWeapon = Equipment.itemAt(Equipment.Slot.MAIN_HAND);
 
-
-
-
-    }
-    /**
-     * This method extracts the configuration from the GUI which is presented via the class annotations.
-     */
-    public void extractConfig(){
-        this.className = getOption("Method");
-        this.enumConstantName = getOption("Item To Enchant");
-        this.maxLevel = getOption("Level to stop");
-        this.mySpell = EnchantType.valueOf(getOption("Method")).getSpell();
-        try {
-            Class<?> clazz = Class.forName("Enchanter.Data." + className);
-            Field field = clazz.getField(enumConstantName);
-            Enum<?> selectedEnum = (Enum<?>) field.get(null);
-            this.unenchantedItemID = ((Enchantable) selectedEnum).getUnenchantedID();
-            this.enchantedItemID = ((Enchantable) selectedEnum).getEnchantedID();
-            this.levelReq = ((Enchantable) selectedEnum).getLevelReq();
-        } catch (ClassNotFoundException | IllegalArgumentException | IllegalAccessException | NoSuchFieldException
-                 | SecurityException ignored) {
-        }
     }
 
     /**
@@ -106,8 +94,10 @@ public class Enchanter extends AbstractScript {
      * @param newMethod Fixed string.
      */
     @ValueChanged(keyName = "Method")
-    public void methodUpdated(String newMethod) {
-        updateAllowedOptions("Method", ConfigHandler.handleMethodUpdate(newMethod));
+    public void  updateMethod(String newMethod){
+
+        updateAllowedOptions("Item to Enchant", ConfigHandler.methodUpdated(newMethod));
+        updateVisibility("Item to Enchant", true);
     }
 
     public static void main(String[] args) {
