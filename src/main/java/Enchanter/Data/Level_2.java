@@ -1,8 +1,7 @@
 package Enchanter.Data;
 
-import org.powbot.mobile.rscache.loader.ItemLoader;
-
 public enum Level_2 implements Enchantable{
+    DEFAULT_VALUE(1696 ,1729 , 27),
     EMERALD_RING(1639 ,2552 , 27),
     EMERALD_BRACELET(11076 ,11079  , 27),
     EMERALD_NECKLACE(1658 ,5521 , 27),
@@ -33,6 +32,9 @@ public enum Level_2 implements Enchantable{
 
     public int getLevelReq(){
         return levelReq;
+    }
+    public String getName() {
+        return name();
     }
 
  

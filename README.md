@@ -26,4 +26,5 @@ https://github.com/PTYB?tab=repositories
 
 ### Script Update Log
 
-##### September 22.2023 - Finished Interface
+##### September 29.2023 - Added bank areas, Default variables.
+##### September 22.2023 - Finished Interface.

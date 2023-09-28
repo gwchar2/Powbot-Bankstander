@@ -1,6 +1,7 @@
 package Enchanter.Data;
 
 public enum Level_7 implements Enchantable{
+    DEFAULT_VALUE(19538  ,19550 , 93),
     ZENYTE_RING(19538  ,19550 , 93),
     ZENYTE_BRACELET(19492 ,19547 , 93),
     ZENYTE_NECKLACE(19535  ,19544 , 93),
@@ -28,8 +29,10 @@ public enum Level_7 implements Enchantable{
     public int getLevelReq(){
         return levelReq;
     }
+    public String getName() {
+        return name();
+    }
 
 
-   
 }
 

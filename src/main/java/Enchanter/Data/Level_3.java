@@ -4,6 +4,7 @@ package Enchanter.Data;
 import org.powbot.mobile.rscache.loader.ItemLoader;
 
 public enum Level_3 implements Enchantable{
+    DEFAULT_VALUE(1641 ,2568  , 49),
     RUBY_RING(1641 ,2568  , 49),
     RUBY_BRACELET(11085 ,11194 , 49),
     RUBY_NECKLACE(1660  ,11065  , 49),
@@ -35,6 +36,10 @@ public enum Level_3 implements Enchantable{
     public int getLevelReq(){
         return levelReq;
     }
+    public String getName() {
+        return name();
+    }
+
 
 
     

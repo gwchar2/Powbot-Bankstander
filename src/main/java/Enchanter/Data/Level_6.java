@@ -3,6 +3,7 @@ package Enchanter.Data;
 import org.powbot.mobile.rscache.loader.ItemLoader;
 
 public enum Level_6 implements Enchantable{
+    DEFAULT_VALUE(6575 ,6583 , 87),
     ONYX_RING(6575 ,6583 , 87),
     ONYX_BRACELET(11130  ,11133 , 87),
     ONYX_NECKLACE(6577 ,11128  , 87),
@@ -28,6 +29,9 @@ public enum Level_6 implements Enchantable{
 
     public int getLevelReq(){
         return levelReq;
+    }
+    public String getName() {
+        return name();
     }
 
  

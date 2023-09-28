@@ -13,14 +13,17 @@ public enum EnchantType {
     LEVEL_6(Magic.Spell.ENCHANT_LEVEL_6_JEWELLERY),
     LEVEL_7(Magic.Spell.ENCHANT_LEVEL_7_JEWELLERY);
 
-    private Spell spell;
+    private final Magic.Spell spell;
 
-    EnchantType(Spell spell) {
+    EnchantType(Magic.Spell spell) {
         this.spell = spell;
     }
 
-    public Spell getSpell() {
+    public Magic.Spell getSpell() {
         return spell;
+    }
+    public String getName() {
+        return name();
     }
 
 }

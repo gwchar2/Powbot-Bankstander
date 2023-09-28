@@ -7,4 +7,6 @@ public interface Enchantable {
 
     int getLevelReq();
 
+    String getName();
+
 }

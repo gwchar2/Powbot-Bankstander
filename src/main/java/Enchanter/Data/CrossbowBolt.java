@@ -1,6 +1,7 @@
 package Enchanter.Data;
 
-public enum CrossbowBolt implements Enchantable {   
+public enum CrossbowBolt implements Enchantable {
+    DEFAULT_VALUE(21973  ,21950 , 87),
     OPAL(879 ,9236 ,9),
     OPAL_DRAGON(21955 ,21932  , 9),
     SAPPHIRE(9240 ,9240 , 56),
@@ -45,7 +46,9 @@ public enum CrossbowBolt implements Enchantable {
     public int getLevelReq() {
         return levelReq;
     }
-
+    public String getName() {
+        return name();
+    }
   
 }
 

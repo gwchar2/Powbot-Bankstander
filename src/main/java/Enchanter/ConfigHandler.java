@@ -1,16 +1,13 @@
 package Enchanter;
 import Enchanter.Data.*;
-import org.powbot.api.rt4.Magic;
+
 public class ConfigHandler extends Enchanter {
     /**
      * This method extracts the information received from the GUI.
      */
-    public static void extractConfig(String method, String item, int level, Magic.Spell spell, String bankArea) {
-
-        enumConstantName = item;
-        maxLevel = level;
-        mySpell = spell;
-        chosenBank = bankArea;
+    public static void extractConfig(String method, String item, int level, String spell, String bank) {
+        if (method.isEmpty())
+            className = "CrossbowBolt";
         if (method.equals("BOLTS"))
             className = "CrossbowBolt";
         if (method.equals("LEVEL_1"))
@@ -27,16 +24,21 @@ public class ConfigHandler extends Enchanter {
             className = "Level_6";
         if (method.equals("LEVEL_7"))
             className = "Level_7";
-        System.out.println(className);
+        if (item.isEmpty()) enumConstantName = "DEFAULT_VALUE";
+        else enumConstantName = item;
+        if (level == 0) maxLevel = 100;
+        else maxLevel = level;
+        if (spell.isEmpty()) mySpell = EnchantType.BOLT.getSpell();
+        else mySpell = EnchantType.valueOf(spell).getSpell();
+        bankArea = BankAreas.valueOf(bank).getBankArea();
+        bankName = BankAreas.valueOf(bank).name();
+
         try {
             Class<?> enumClass = Class.forName("Enchanter.Data." + className);
             if (enumClass.isEnum()) {
                 Enum<?> enumConstant = Enum.valueOf((Class<Enum>) enumClass, enumConstantName);
                 if (enumConstant instanceof Enchantable) {
-                    Enchantable enchantableEnum = (Enchantable) enumConstant;
-                    enchantedItemID = enchantableEnum.getEnchantedID();
-                    unenchantedItemID = enchantableEnum.getUnenchantedID();
-                    levelReq = enchantableEnum.getLevelReq();
+                    enchantableEnum = (Enchantable) enumConstant;
                 }
             }
             else { //For testing purposes
@@ -47,14 +49,14 @@ public class ConfigHandler extends Enchanter {
         } catch (IllegalArgumentException e) { //For testing purposes
             System.out.println("Enum constant not found: " + enumConstantName);
         }
+        System.out.println("Finished extractConfig\n");
     }
 
-
-        /**
-         * Updates the item list according to "Method"
-         * @param newMethod
-         * @return Item_List
-         */
+    /**
+     * Changes the Method listed according to user input.
+     * @param newMethod - The chosen input
+     * @return newString - The new string list of options.
+     */
     public static String[] methodUpdated(String newMethod) {
         if (newMethod.equals("BOLT")) {
             String[] CrossbowBoltList = {"ONYX_DRAGON", "ONYX", "DRAGONSTONE_DRAGON", "DRAGONSTONE",

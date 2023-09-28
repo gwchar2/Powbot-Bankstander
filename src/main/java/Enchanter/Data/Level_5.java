@@ -3,6 +3,7 @@ package Enchanter.Data;
 import org.powbot.mobile.rscache.loader.ItemLoader;
 
 public enum Level_5 implements Enchantable{
+    DEFAULT_VALUE(1645  ,11980 , 68),
     DRAGONSTONE_RING(1645  ,11980 , 68),
     DRAGONSTONE_BRACELET(11115 ,11118  , 68),
     DRAGONSTONE_NECKLACE(1664  ,11105 , 68),
@@ -29,6 +30,9 @@ public enum Level_5 implements Enchantable{
 
     public int getLevelReq(){
         return levelReq;
+    }
+    public String getName() {
+        return name();
     }
 
 
