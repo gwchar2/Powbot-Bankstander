@@ -1,4 +1,4 @@
-# Powbot-Gradle-Script
+# Powbot-BankStander
 First Powbot Script using Gradle
 
 ## Useful API's and Repositories
