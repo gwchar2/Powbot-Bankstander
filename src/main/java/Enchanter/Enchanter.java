@@ -56,7 +56,6 @@ public class Enchanter extends AbstractScript {
 
     /**
      * Calls for MethodHandler according to "Method" change.
-     *
      * @param newMethod Fixed string.
      */
     @ValueChanged(keyName = "Method")
