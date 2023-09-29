@@ -49,7 +49,6 @@ public class ConfigHandler extends Enchanter {
         } catch (IllegalArgumentException e) { //For testing purposes
             System.out.println("Enum constant not found: " + enumConstantName);
         }
-        System.out.println("Finished extractConfig\n");
     }
 
     /**

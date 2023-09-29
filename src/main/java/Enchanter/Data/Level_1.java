@@ -1,9 +1,5 @@
 package Enchanter.Data;
 
-import org.powbot.mobile.rscache.loader.ItemLoader;
-
-import java.util.Objects;
-
 public enum  Level_1 implements Enchantable {
     DEFAULT_VALUE(1637, 2550, 7),
     SAPPHIRE_RING(1637, 2550, 7),
@@ -40,6 +36,7 @@ public enum  Level_1 implements Enchantable {
     public String getName() {
         return name();
     }
+
 
 
 }

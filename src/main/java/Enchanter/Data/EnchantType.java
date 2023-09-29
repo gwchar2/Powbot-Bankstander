@@ -1,5 +1,6 @@
 package Enchanter.Data;
 
+import org.powbot.api.rt4.Item;
 import org.powbot.api.rt4.Magic;
 import org.powbot.api.rt4.Magic.Spell;
 
@@ -22,6 +23,7 @@ public enum EnchantType {
     public Magic.Spell getSpell() {
         return spell;
     }
+
     public String getName() {
         return name();
     }
