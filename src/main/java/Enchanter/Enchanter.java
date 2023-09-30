@@ -1,11 +1,11 @@
 package Enchanter;
 
 import Enchanter.Data.BankAreas;
+import Enchanter.Data.BankData;
 import Enchanter.Data.Enchantable;
 import org.powbot.api.Area;
 import org.powbot.api.requirement.RunePowerRequirement;
-import org.powbot.api.rt4.Equipment;
-import org.powbot.api.rt4.Magic;
+import org.powbot.api.rt4.*;
 import org.powbot.api.rt4.walking.model.Skill;
 import org.powbot.api.script.AbstractScript;
 import org.powbot.api.script.OptionType;
@@ -13,6 +13,9 @@ import org.powbot.api.script.ScriptCategory;
 import org.powbot.api.script.ScriptConfiguration;
 import org.powbot.api.script.ScriptManifest;
 import org.powbot.api.script.ValueChanged;
+import org.powbot.dax.shared.helpers.BankHelper;
+
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,10 +52,15 @@ public class Enchanter extends AbstractScript {
     protected static Enchantable enchantableEnum; //The enum method selected by user (Narrowed down to item name), implements all enchantable.
     protected static String className; // User input for class name
     protected static String enumConstantName; // User input for enum constant name
-    protected static String bankName; // User input for bank name
+    public static String bankName; // User input for bank name
     protected static Magic.Spell mySpell; // Chosen spell
-    protected static Area bankArea; // The final bank area
+    public static Area bankArea; // The final bank area
+    protected static BankData bankData;
     protected static int maxLevel;
+    protected static Player player;
+
+    public Enchanter() {
+    }
 
     /**
      * Calls for MethodHandler according to "Method" change.
@@ -72,6 +80,7 @@ public class Enchanter extends AbstractScript {
      */
     @Override
     public void onStart() {
+        player = Players.local();
         ConfigHandler.extractConfig(getOption("Method"),
                 getOption("Item To Enchant"),
                 getOption("Level to stop"),
@@ -86,23 +95,9 @@ public class Enchanter extends AbstractScript {
         checkRequirements();
         RunePowerRequirements.forEach(it -> getLog().info("Rune: " + it.getPower() + " Amount: " + it.getAmount()));
         //RunePowerRequirements.forEach(it -> amount.set(it.getAmount())); for each it in RunePowerReq list set(it.getAmount) to local int amount.
-
-
         //for (RunePowerRequirement requirement : RunePowerRequirements) {} Good for the withdraw from bank method !!
         //}
 
-        // finish requirements method
-        // checkMagicLevel() -- check can cast according to magic level
-        // checkIfAtBank() -- check if you are at the bank area already
-        // if not at bank, move to the bank.
-        // moveToBank() - teleports to the bank, or walks to it.
-        // if you are at the bank :
-        // getrunesneeded()
-        // if have element staff in bank (or inventory, or equipped) that is = to element rune, wield it.
-        // check for the runes , withdraw all.
-        // check for the item chosen, save as int the total amount in the bank. maybe try "TAOR" = amountinbank() (total amount of runes = ) or "TAOI" (total amount of item)
-        // get the price of runes used (if staff equipped, no element rune) from ge, and price of item enchanted item not enchanted, and enable profit counter.
-        // startCasting() - has designed click paterns, and fast clicking for bolts.
     }
     @Override
     public void poll() {
@@ -115,17 +110,34 @@ public class Enchanter extends AbstractScript {
     public void checkRequirements() {
         if (Skill.Magic.realLevel() < enchantableEnum.getLevelReq() || Magic.Book.MODERN.name().compareTo(Magic.book().name()) != 0 || Skill.Magic.realLevel() > maxLevel) {
             getLog().info("You don't meet the requirements");
+
         }
+        BankData bankData = new BankData(bankArea); // makes a new bankData
+        bankData.atBank(); // checks if you are at the bank, walks if needs to.
+    }
+    // finish requirements method
+    // checkIfAtBank() -- check if you are at the bank area already
+    // if not at bank, move to the bank.
+    // moveToBank() - teleports to the bank, or walks to it.
+    // if you are at the bank :
+    // getrunesneeded()
+    // if have element staff in bank (or inventory, or equipped) that is = to element rune, wield it.
+    // check for the runes , withdraw all.
+    // check for the item chosen, save as int the total amount in the bank. maybe try "TAOR" = amountinbank() (total amount of runes = ) or "TAOI" (total amount of item)
+    // get the price of runes used (if staff equipped, no element rune) from ge, and price of item enchanted item not enchanted, and enable profit counter.
+    // startCasting() (poll) - has designed click patterns, and fast clicking for bolts.
+
+    public void castRequirements(){
         RunePowerRequirements = mySpell.requirements()
                 .stream()
                 .filter(RunePowerRequirement.class::isInstance)
                 .map(RunePowerRequirement.class::cast)
                 .collect(Collectors.toList());
-
     }
 
     public static void main (String[]args){
         new Enchanter().startScript();
     }
+
 
 }

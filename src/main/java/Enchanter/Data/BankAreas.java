@@ -3,6 +3,8 @@ package Enchanter.Data;
 import org.powbot.api.Area;
 import org.powbot.api.Tile;
 
+import static Enchanter.Enchanter.*;
+
 public enum BankAreas {
     DEFAULT_VALUE(3159,3493,0,3170,3484,0), //GE
     GRAND_EXCHANGE(3159,3493,0,3170,3484,0),
@@ -20,6 +22,9 @@ public enum BankAreas {
     }
     public Area getBankArea(){
         return bankArea;
+    }
+    public String getBankAreaName(){
+        return bankName;
     }
 
 
