@@ -4,7 +4,7 @@ My first Powbot script!
 =======
 # Powbot-BankStander
 First Powbot Script using Gradle
->>>>>>> 052c866ecc22a680ed85c10558c6455c9476c006
+>>>>>>> 
 
 ## Useful API's and Repositories
 
