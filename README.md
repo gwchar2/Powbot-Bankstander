@@ -1,10 +1,4 @@
-<<<<<<< HEAD
 # Powbot Enchanting Bankstander
-My first Powbot script!
-=======
-# Powbot-BankStander
-First Powbot Script using Gradle
->>>>>>> 
 
 ## Useful API's and Repositories
 
