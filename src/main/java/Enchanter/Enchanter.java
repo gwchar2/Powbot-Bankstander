@@ -1,9 +1,10 @@
 package Enchanter;
 
 import Enchanter.Data.BankAreas;
-import Enchanter.Data.BankData;
 import Enchanter.Data.Enchantable;
 import org.powbot.api.Area;
+import org.powbot.api.Condition;
+import org.powbot.api.Tile;
 import org.powbot.api.requirement.RunePowerRequirement;
 import org.powbot.api.rt4.*;
 import org.powbot.api.rt4.walking.model.Skill;
@@ -13,8 +14,6 @@ import org.powbot.api.script.ScriptCategory;
 import org.powbot.api.script.ScriptConfiguration;
 import org.powbot.api.script.ScriptManifest;
 import org.powbot.api.script.ValueChanged;
-import org.powbot.dax.shared.helpers.BankHelper;
-
 
 import java.util.Arrays;
 import java.util.List;
@@ -55,7 +54,7 @@ public class Enchanter extends AbstractScript {
     public static String bankName; // User input for bank name
     protected static Magic.Spell mySpell; // Chosen spell
     public static Area bankArea; // The final bank area
-    protected static BankData bankData;
+    public static Tile  myBankTile;
     protected static int maxLevel;
     protected static Player player;
 
@@ -93,7 +92,9 @@ public class Enchanter extends AbstractScript {
         getLog().info("Level to stop: " + maxLevel);
         getLog().info("Main Hand Weapon: " + Equipment.itemAt(Equipment.Slot.MAIN_HAND).name());
         checkRequirements();
+        castRequirements();
         RunePowerRequirements.forEach(it -> getLog().info("Rune: " + it.getPower() + " Amount: " + it.getAmount()));
+        myBankTile = BankAreas.valueOf(bankName).makeTile(bankName);
         //RunePowerRequirements.forEach(it -> amount.set(it.getAmount())); for each it in RunePowerReq list set(it.getAmount) to local int amount.
         //for (RunePowerRequirement requirement : RunePowerRequirements) {} Good for the withdraw from bank method !!
         //}
@@ -102,42 +103,68 @@ public class Enchanter extends AbstractScript {
     @Override
     public void poll() {
 
-    }
-
-    /**
-     * Checks the requirements needed / available from user.
-     */
-    public void checkRequirements() {
-        if (Skill.Magic.realLevel() < enchantableEnum.getLevelReq() || Magic.Book.MODERN.name().compareTo(Magic.book().name()) != 0 || Skill.Magic.realLevel() > maxLevel) {
-            getLog().info("You don't meet the requirements");
-
+        if (!atBank()) {
+            getLog().info("Something broke");
         }
-        BankData bankData = new BankData(bankArea); // makes a new bankData
-        bankData.atBank(); // checks if you are at the bank, walks if needs to.
-    }
-    // finish requirements method
-    // checkIfAtBank() -- check if you are at the bank area already
-    // if not at bank, move to the bank.
-    // moveToBank() - teleports to the bank, or walks to it.
-    // if you are at the bank :
-    // getrunesneeded()
-    // if have element staff in bank (or inventory, or equipped) that is = to element rune, wield it.
-    // check for the runes , withdraw all.
-    // check for the item chosen, save as int the total amount in the bank. maybe try "TAOR" = amountinbank() (total amount of runes = ) or "TAOI" (total amount of item)
-    // get the price of runes used (if staff equipped, no element rune) from ge, and price of item enchanted item not enchanted, and enable profit counter.
-    // startCasting() (poll) - has designed click patterns, and fast clicking for bolts.
-
-    public void castRequirements(){
-        RunePowerRequirements = mySpell.requirements()
-                .stream()
-                .filter(RunePowerRequirement.class::isInstance)
-                .map(RunePowerRequirement.class::cast)
-                .collect(Collectors.toList());
     }
 
-    public static void main (String[]args){
-        new Enchanter().startScript();
-    }
+        /**
+         * Checks the requirements needed / available from user.
+         */
+        public void checkRequirements () {
+            if (Skill.Magic.realLevel() < enchantableEnum.getLevelReq() || Magic.Book.MODERN.name().compareTo(Magic.book().name()) != 0 || Skill.Magic.realLevel() > maxLevel) {
+                getLog().info("You don't meet the requirements");
+            }
+        }
+        // finish requirements method
+        // checkIfAtBank() -- check if you are at the bank area already
+        // if not at bank, move to the bank.
+        // moveToBank() - teleports to the bank, or walks to it.
+        // if you are at the bank :
+        // getrunesneeded()
+        // if have element staff in bank (or inventory, or equipped) that is = to element rune, wield it.
+        // check for the runes , withdraw all.
+        // check for the item chosen, save as int the total amount in the bank. maybe try "TAOR" = amountinbank() (total amount of runes = ) or "TAOI" (total amount of item)
+        // get the price of runes used (if staff equipped, no element rune) from ge, and price of item enchanted item not enchanted, and enable profit counter.
+        // startCasting() (poll) - has designed click patterns, and fast clicking for bolts.
 
-
+        public void castRequirements () {
+            RunePowerRequirements = mySpell.requirements()
+                    .stream()
+                    .filter(RunePowerRequirement.class::isInstance)
+                    .map(RunePowerRequirement.class::cast)
+                    .collect(Collectors.toList());
+        }
+        public boolean atBank() {
+            System.out.println("Tile: " + myBankTile.toString());
+            if (bankArea.contains(player.tile())) {
+                if (player.tile().equals(myBankTile)) {
+                    getLog().info("User is at the: " + bankName + " Bank");
+                }
+                else {
+                    getLog().info("Need to walk to the bank booth");
+                    Movement.step(myBankTile);
+                    if (Condition.wait(() -> player.inMotion(), 50, 15)) {
+                        Condition.wait(() -> !player.inMotion(), 150, 25);
+                    }
+                }
+            }
+            else{
+                getLog().info("Need to walk to the bank area");
+                Movement.step(myBankTile);
+                if(Condition.wait(()->player.inMotion(),50, 15)){
+                    Condition.wait(()->!player.inMotion(),150, 25);
+                }
+            }
+            if (player.tile().equals(myBankTile)) return true;
+            else {
+                getLog().info("Something broke");
+                return false;
+            }
+            }
+        public static void main (String[]args){
+                new Enchanter().startScript();
+        }
 }
+
+

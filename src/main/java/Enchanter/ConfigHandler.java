@@ -32,7 +32,6 @@ public class ConfigHandler extends Enchanter {
         else mySpell = EnchantType.valueOf(spell).getSpell();
         bankArea = BankAreas.valueOf(bank).getBankArea();
         bankName = BankAreas.valueOf(bank).name();
-
         try {
             Class<?> enumClass = Class.forName("Enchanter.Data." + className);
             if (enumClass.isEnum()) {
