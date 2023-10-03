@@ -34,38 +34,23 @@ public enum BankAreas {
         int i, x, y;
         Tile[] bankTiles = new Tile[5];
         Random random = new Random();
-        switch (BankAreas.valueOf(bankName).getName()) {
-            case "GRAND_EXCHANGE":
-                bankTiles = new Tile[]{new Tile(3167, 3488), new Tile(3162, 3488), new Tile(3162, 3490), new Tile(3165, 3492), new Tile(3167, 3490)};
-                i = random.nextInt(5);
-                bankTile1 = bankTiles[i];
-            case "VARROCK_WEST":
-                x = 3185;
-                y = 3436;
-                for (i = 0; i < 5; i++) {
-                    bankTiles[i] = new Tile(x, y);
-                    y += 2;
-                }
-                i = random.nextInt(5);
-                bankTile1 = bankTiles[i];
-            case "VARROCK_EAST":
-                x = 3251;
-                y = 3420;
-                for (i = 0; i < 6; i++) {
-                    bankTiles[i] = new Tile(x, y);
-                    x++;
-                }
-                i = random.nextInt(6);
-                bankTile1 = bankTiles[i];
-            case "EDGEVILLE":
-                bankTiles = new Tile[]{new Tile(3096, 3494), new Tile(3098, 3494), new Tile(3094, 3491), new Tile(3094, 3498)};
-                i = random.nextInt(3);
-                bankTile1 = bankTiles[i];
-            default:
-                bankTile1 = new Tile(3167, 3488);
-
+        i = random.nextInt(5);
+        if (bankName.compareTo("GRAND_EXCHANGE") == 0) {
+            bankTiles = new Tile[]{new Tile(3167, 3488), new Tile(3162, 3488), new Tile(3162, 3490), new Tile(3165, 3492), new Tile(3167, 3490)};
+            return new Tile(bankTiles[i].getX(),bankTiles[i].getY());
         }
-        return  bankTile1;
+        else if (bankName.compareTo("VARROCK_WEST") == 0 ){
+                return new Tile (3185,3436+(i*2));
+        }
+        else if (bankName.compareTo("VARROCK_EAST") == 0 ) {
+            return new Tile(3250+ (i * 2), 3420 );
+        }
+        else if (bankName.compareTo("EDGEVILLE") == 0 ) {
+            bankTiles = new Tile[]{new Tile(3096, 3494), new Tile(3098, 3494), new Tile(3094, 3491), new Tile(3094, 3498)};
+            return new Tile(bankTiles[i].getX(),bankTiles[i].getY());
+        }
+        else
+            return new Tile(3167, 3488);
     }
 
 

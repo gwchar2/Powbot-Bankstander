@@ -102,7 +102,6 @@ public class Enchanter extends AbstractScript {
     }
     @Override
     public void poll() {
-
         if (!atBank()) {
             getLog().info("Something broke");
         }
@@ -140,6 +139,7 @@ public class Enchanter extends AbstractScript {
             if (bankArea.contains(player.tile())) {
                 if (player.tile().equals(myBankTile)) {
                     getLog().info("User is at the: " + bankName + " Bank");
+                    return true;
                 }
                 else {
                     getLog().info("Need to walk to the bank booth");
@@ -151,7 +151,7 @@ public class Enchanter extends AbstractScript {
             }
             else{
                 getLog().info("Need to walk to the bank area");
-                Movement.step(myBankTile);
+                Movement.moveTo(myBankTile);
                 if(Condition.wait(()->player.inMotion(),50, 15)){
                     Condition.wait(()->!player.inMotion(),150, 25);
                 }
