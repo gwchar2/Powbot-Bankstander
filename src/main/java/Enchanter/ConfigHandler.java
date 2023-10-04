@@ -1,14 +1,23 @@
 package Enchanter;
+
 import Enchanter.Data.*;
+import org.powbot.api.rt4.walking.model.Skill;
+import org.powbot.api.script.paint.Paint;
+import org.powbot.api.script.paint.PaintBuilder;
+
+import java.io.ObjectInputFilter;
+import java.util.logging.Logger;
+
 
 public class ConfigHandler extends Enchanter {
+    public static Logger LoggerFactory;
+    public static final Logger logger = Logger.getLogger("Config Handler: ");
+
     /**
      * This method extracts the information received from the GUI.
      */
     public static void extractConfig(String method, String item, int level, String spell, String bank) {
-        if (method.isEmpty())
-            className = "CrossbowBolt";
-        if (method.equals("BOLTS"))
+        if (method.isEmpty() || method.equals("BOLT"))
             className = "CrossbowBolt";
         if (method.equals("LEVEL_1"))
             className = "Level_1";
@@ -39,19 +48,19 @@ public class ConfigHandler extends Enchanter {
                 if (enumConstant instanceof Enchantable) {
                     enchantableEnum = (Enchantable) enumConstant;
                 }
-            }
-            else { //For testing purposes
-                System.out.println("The specified class is not an enum.");
+            } else { //For testing purposes
+                logger.info("The specified class is not an enum.");
             }
         } catch (ClassNotFoundException e) { //For testing purposes
-            System.out.println("Enum class not found: " + className);
+            logger.info("Enum class not found: " + className);
         } catch (IllegalArgumentException e) { //For testing purposes
-            System.out.println("Enum constant not found: " + enumConstantName);
+            logger.info("Enum constant not found: " + enumConstantName);
         }
     }
 
     /**
      * Changes the Method listed according to user input.
+     *
      * @param newMethod - The chosen input
      * @return newString - The new string list of options.
      */
@@ -103,6 +112,8 @@ public class ConfigHandler extends Enchanter {
         }
         return new String[0];
     }
+
+
 }
 
 

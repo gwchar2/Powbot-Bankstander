@@ -1,0 +1,7 @@
+// if you are at the bank :
+        // getrunesneeded()
+        // if have element staff in bank (or inventory, or equipped) that is = to element rune, wield it.
+        // check for the runes , withdraw all.
+        // check for the item chosen, save as int the total amount in the bank. maybe try "TAOR" = amountinbank() (total amount of runes = ) or "TAOI" (total amount of item)
+        // get the price of runes used (if staff equipped, no element rune) from ge, and price of item enchanted item not enchanted, and enable profit counter.
+        //startCasting() (poll) - has designed click patterns, and fast clicking for bolts.

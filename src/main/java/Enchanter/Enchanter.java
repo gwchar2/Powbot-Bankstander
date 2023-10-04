@@ -1,9 +1,9 @@
 package Enchanter;
 
+import Enchanter.helpers.checks;
 import Enchanter.Data.BankAreas;
 import Enchanter.Data.Enchantable;
 import org.powbot.api.Area;
-import org.powbot.api.Condition;
 import org.powbot.api.Tile;
 import org.powbot.api.requirement.RunePowerRequirement;
 import org.powbot.api.rt4.*;
@@ -14,11 +14,14 @@ import org.powbot.api.script.ScriptCategory;
 import org.powbot.api.script.ScriptConfiguration;
 import org.powbot.api.script.ScriptManifest;
 import org.powbot.api.script.ValueChanged;
+import org.powbot.api.script.paint.Paint;
+import org.powbot.api.script.paint.PaintBuilder;
+import org.powbot.mobile.script.ScriptManager;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
-
+import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 
 
 @ScriptManifest(name = "Open Enchanter",
@@ -29,50 +32,38 @@ import java.util.stream.Collectors;
         markdownFileName = "README.md")
 
 @ScriptConfiguration.List({
-        @ScriptConfiguration(name = "Method", description = "Type of enchant to cast", allowedValues = { "","BOLT",
-                "LEVEL_1", "LEVEL_2", "LEVEL_3", "LEVEL_4", "LEVEL_5", "LEVEL_6", "LEVEL_7" }),
+        @ScriptConfiguration(name = "Method", description = "Type of enchant to cast", allowedValues = {"", "BOLT",
+                "LEVEL_1", "LEVEL_2", "LEVEL_3", "LEVEL_4", "LEVEL_5", "LEVEL_6", "LEVEL_7"}),
 
         @ScriptConfiguration(name = "Item to Enchant", description = "What item do you want to enchant", allowedValues = {
                 "ONYX_DRAGON", "ONYX", "DRAGONSTONE_DRAGON", "DRAGONSTONE",
                 "DIAMOND_DRAGON", "DIAMOND", "RUBY_DRAGON", "RUBY",
                 "TOPAZ_DRAGON", "TOPAZ", "EMERALD_DRAGON", "EMERALD", "PEARL_DRAGON", "PEARL", "JADE_DRAGON",
-                "JADE", "SAPPHIRE_DRAGON", "SAPPHIRE", "OPAL_DRAGON", "OPAL" }, visible = false, defaultValue = "DEFAULT_VALUE"),
+                "JADE", "SAPPHIRE_DRAGON", "SAPPHIRE", "OPAL_DRAGON", "OPAL"}, visible = false, defaultValue = "DEFAULT_VALUE"),
 
         @ScriptConfiguration(name = "Level to stop", description = "Level to Stop at. Leave empty to never stop!",
                 optionType = OptionType.INTEGER, defaultValue = "0"),
 
         @ScriptConfiguration(name = "Where to enchant", description = "Bankstands here",
-                allowedValues = {"GRAND_EXCHANGE", "VARROCK_WEST", "VARROCK_EAST", "EDGEVILLE"},defaultValue = "DEFAULT_VALUE")
+                allowedValues = {"GRAND_EXCHANGE", "VARROCK_WEST", "VARROCK_EAST", "EDGEVILLE"}, defaultValue = "DEFAULT_VALUE")
 })
 
 
 public class Enchanter extends AbstractScript {
-    protected static List<RunePowerRequirement> RunePowerRequirements;
-    protected static Enchantable enchantableEnum; //The enum method selected by user (Narrowed down to item name), implements all enchantable.
+    public static Logger LoggerFactory;
+    public static final Logger logger = Logger.getLogger("Enchanter : ");
+
+    public static List<RunePowerRequirement> RunePowerRequirements;
+    public static Enchantable enchantableEnum; //The enum method selected by user (Narrowed down to item name), implements all enchantable.
     protected static String className; // User input for class name
     protected static String enumConstantName; // User input for enum constant name
     public static String bankName; // User input for bank name
-    protected static Magic.Spell mySpell; // Chosen spell
+    public static Magic.Spell mySpell; // Chosen spell
     public static Area bankArea; // The final bank area
-    public static Tile  myBankTile;
-    protected static int maxLevel;
-    protected static Player player;
-
-    public Enchanter() {
-    }
-
-    /**
-     * Calls for MethodHandler according to "Method" change.
-     * @param newMethod Fixed string.
-     */
-    @ValueChanged(keyName = "Method")
-    public void updateMethod(String newMethod) {
-        updateAllowedOptions("Item to Enchant", ConfigHandler.methodUpdated(newMethod));
-        if (newMethod.isEmpty())
-            updateVisibility("Item to Enchant", false);
-        else
-            updateVisibility("Item to Enchant", true);
-    }
+    public static Tile myBankTile;
+    public static int maxLevel;
+    public static Player player;
+    public static boolean suitableWeapon;
 
     /**
      * Gets the data upon pressing Start.
@@ -85,16 +76,17 @@ public class Enchanter extends AbstractScript {
                 getOption("Level to stop"),
                 getOption("Method"),
                 getOption("Where to enchant"));
-        getLog().info("Finished extracting from config!");
-        getLog().info("Chosen Bank: " + bankName + "\nTiles: " + Arrays.toString(BankAreas.GRAND_EXCHANGE.getBankArea().get_tiles()));
-        getLog().info("Your chosen Spell: " + mySpell.name() + " Spell level requirement: "+enchantableEnum.getLevelReq());
-        getLog().info("Item to enchant: " + enumConstantName + " Unenchanted ID: " +enchantableEnum.getUnenchantedID()+ " Enchanted ID: "+enchantableEnum.getEnchantedID());
-        getLog().info("Level to stop: " + maxLevel);
-        getLog().info("Main Hand Weapon: " + Equipment.itemAt(Equipment.Slot.MAIN_HAND).name());
-        checkRequirements();
-        castRequirements();
-        RunePowerRequirements.forEach(it -> getLog().info("Rune: " + it.getPower() + " Amount: " + it.getAmount()));
+        logger.info("Finished extracting from config!");
+        logger.info("Chosen Bank: " + bankName + "\nTiles: " + Arrays.toString(BankAreas.GRAND_EXCHANGE.getBankArea().get_tiles()));
+        logger.info("Your chosen Spell: " + mySpell.name() + " Spell level requirement: " + enchantableEnum.getLevelReq());
+        logger.info("Item to enchant: " + enumConstantName + " Unenchanted ID: " + enchantableEnum.getUnenchantedID() + " Enchanted ID: " + enchantableEnum.getEnchantedID());
+        logger.info("Level to stop: " + maxLevel);
+        if(!checks.checkRequirements()) ScriptManager.INSTANCE.stop();
+        checks.castRequirements();
+        RunePowerRequirements.forEach(it -> logger.info("Rune: " + it.getPower() + " Amount: " + it.getAmount()));
+        suitableWeapon = checks.checkWeapon();
         myBankTile = BankAreas.valueOf(bankName).makeTile(bankName);
+        addPaint();
         //RunePowerRequirements.forEach(it -> amount.set(it.getAmount())); for each it in RunePowerReq list set(it.getAmount) to local int amount.
         //for (RunePowerRequirement requirement : RunePowerRequirements) {} Good for the withdraw from bank method !!
         //}
@@ -102,69 +94,51 @@ public class Enchanter extends AbstractScript {
     }
     @Override
     public void poll() {
-        if (!atBank()) {
-            getLog().info("Something broke");
+        if (!checks.atBank()) {
+            logger.info("Something broke");
         }
+        logger.info("Got to the bank!");
     }
 
-        /**
-         * Checks the requirements needed / available from user.
-         */
-        public void checkRequirements () {
-            if (Skill.Magic.realLevel() < enchantableEnum.getLevelReq() || Magic.Book.MODERN.name().compareTo(Magic.book().name()) != 0 || Skill.Magic.realLevel() > maxLevel) {
-                getLog().info("You don't meet the requirements");
-            }
-        }
-        // finish requirements method
-        // checkIfAtBank() -- check if you are at the bank area already
-        // if not at bank, move to the bank.
-        // moveToBank() - teleports to the bank, or walks to it.
-        // if you are at the bank :
-        // getrunesneeded()
-        // if have element staff in bank (or inventory, or equipped) that is = to element rune, wield it.
-        // check for the runes , withdraw all.
-        // check for the item chosen, save as int the total amount in the bank. maybe try "TAOR" = amountinbank() (total amount of runes = ) or "TAOI" (total amount of item)
-        // get the price of runes used (if staff equipped, no element rune) from ge, and price of item enchanted item not enchanted, and enable profit counter.
-        // startCasting() (poll) - has designed click patterns, and fast clicking for bolts.
+    /**
+     * Calls for MethodHandler according to "Method" change.
+     *
+     * @param newMethod Fixed string.
+     */
+    @ValueChanged(keyName = "Method")
+    public void updateMethod(String newMethod) {
+        updateAllowedOptions("Item to Enchant", ConfigHandler.methodUpdated(newMethod));
+        if (newMethod.isEmpty())
+            updateVisibility("Item to Enchant", false);
+        else
+            updateVisibility("Item to Enchant", true);
+    }
 
-        public void castRequirements () {
-            RunePowerRequirements = mySpell.requirements()
-                    .stream()
-                    .filter(RunePowerRequirement.class::isInstance)
-                    .map(RunePowerRequirement.class::cast)
-                    .collect(Collectors.toList());
-        }
-        public boolean atBank() {
-            System.out.println("Tile: " + myBankTile.toString());
-            if (bankArea.contains(player.tile())) {
-                if (player.tile().equals(myBankTile)) {
-                    getLog().info("User is at the: " + bankName + " Bank");
-                    return true;
-                }
-                else {
-                    getLog().info("Need to walk to the bank booth");
-                    Movement.step(myBankTile);
-                    if (Condition.wait(() -> player.inMotion(), 50, 15)) {
-                        Condition.wait(() -> !player.inMotion(), 150, 25);
-                    }
-                }
-            }
-            else{
-                getLog().info("Need to walk to the bank area");
-                Movement.moveTo(myBankTile);
-                if(Condition.wait(()->player.inMotion(),50, 15)){
-                    Condition.wait(()->!player.inMotion(),150, 25);
-                }
-            }
-            if (player.tile().equals(myBankTile)) return true;
-            else {
-                getLog().info("Something broke");
-                return false;
-            }
-            }
-        public static void main (String[]args){
-                new Enchanter().startScript();
-        }
+    private void addPaint() {
+       Paint paint = PaintBuilder.newBuilder()
+               .addString("Method: ", new Callable<String>() {
+                   @Override
+                   public String call() throws Exception {
+                       return mySpell.name();
+                   }
+               })
+               /**
+               .addString("Stage: ", new Callable<String>() {
+                   @Override
+                   public String call() throws Exception {
+                       ;
+                   }
+               })**/
+               .trackSkill(Skill.Magic)
+               .trackInventoryItem(enchantableEnum.getEnchantedID()," Enchanted")
+               .y(45)
+               .x(40)
+               .build();
+        addPaint(paint);
+    }
+    public static void main(String[] args) {
+        new Enchanter().startScript();
+    }
 }
 
 
