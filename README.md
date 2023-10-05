@@ -41,3 +41,5 @@ https://github.com/PTYB?tab=repositories
 [ ] check for the item chosen, withdraw, minimum amount is 28-runes amount.
 [ ] get the price of runes used (if staff equipped, no element rune) from ge, and price of item enchanted item not enchanted, and enable profit counter.
 [ ] startCasting() - has designed click patterns, and fast clicking for bolts.
+
+
