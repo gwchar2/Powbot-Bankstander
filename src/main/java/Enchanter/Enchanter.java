@@ -1,5 +1,6 @@
 package Enchanter;
 
+import Enchanter.bankopened.bankHelper;
 import Enchanter.helpers.checks;
 import Enchanter.Data.BankAreas;
 import Enchanter.Data.Enchantable;
@@ -16,12 +17,12 @@ import org.powbot.api.script.ScriptManifest;
 import org.powbot.api.script.ValueChanged;
 import org.powbot.api.script.paint.Paint;
 import org.powbot.api.script.paint.PaintBuilder;
-import org.powbot.mobile.script.ScriptManager;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
+import static Enchanter.bankopened.bankHelper;
+import static Enchanter.bankopened.bankHelper.openBank;
 
 
 @ScriptManifest(name = "Open Enchanter",
@@ -50,10 +51,9 @@ import java.util.logging.Logger;
 
 
 public class Enchanter extends AbstractScript {
-    public static Logger LoggerFactory;
     public static final Logger logger = Logger.getLogger("Enchanter : ");
 
-    public static List<RunePowerRequirement> RunePowerRequirements;
+    public static List<RunePowerRequirement> Requirements;
     public static Enchantable enchantableEnum; //The enum method selected by user (Narrowed down to item name), implements all enchantable.
     protected static String className; // User input for class name
     protected static String enumConstantName; // User input for enum constant name
@@ -64,6 +64,9 @@ public class Enchanter extends AbstractScript {
     public static int maxLevel;
     public static Player player;
     public static boolean suitableWeapon;
+    public static String userLog;
+    public static int attemptCounter = 0;
+    public static List<Item> itemList;
 
     /**
      * Gets the data upon pressing Start.
@@ -81,9 +84,9 @@ public class Enchanter extends AbstractScript {
         logger.info("Your chosen Spell: " + mySpell.name() + " Spell level requirement: " + enchantableEnum.getLevelReq());
         logger.info("Item to enchant: " + enumConstantName + " Unenchanted ID: " + enchantableEnum.getUnenchantedID() + " Enchanted ID: " + enchantableEnum.getEnchantedID());
         logger.info("Level to stop: " + maxLevel);
-        if(!checks.checkRequirements()) ScriptManager.INSTANCE.stop();
-        checks.castRequirements();
-        RunePowerRequirements.forEach(it -> logger.info("Rune: " + it.getPower() + " Amount: " + it.getAmount()));
+        checks.checkRequirements();
+        bankHelper.castRequirements();
+        Requirements.forEach(it -> logger.info("Rune: " + it.getPower() + " Amount: " + it.getAmount()));
         suitableWeapon = checks.checkWeapon();
         myBankTile = BankAreas.valueOf(bankName).makeTile(bankName);
         addPaint();
@@ -94,10 +97,12 @@ public class Enchanter extends AbstractScript {
     }
     @Override
     public void poll() {
-        if (!checks.atBank()) {
-            logger.info("Something broke");
-        }
-        logger.info("Got to the bank!");
+    if (checks.atBank()){
+        userLog = "Got to the bank";
+        logger.info(userLog);
+    }
+    openBank();
+    getitemsneeded();
     }
 
     /**
@@ -122,13 +127,12 @@ public class Enchanter extends AbstractScript {
                        return mySpell.name();
                    }
                })
-               /**
                .addString("Stage: ", new Callable<String>() {
                    @Override
                    public String call() throws Exception {
-                       ;
+                       return userLog;
                    }
-               })**/
+               })
                .trackSkill(Skill.Magic)
                .trackInventoryItem(enchantableEnum.getEnchantedID()," Enchanted")
                .y(45)

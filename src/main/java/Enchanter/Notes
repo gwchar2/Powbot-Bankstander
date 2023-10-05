@@ -5,3 +5,30 @@
         // check for the item chosen, save as int the total amount in the bank. maybe try "TAOR" = amountinbank() (total amount of runes = ) or "TAOI" (total amount of item)
         // get the price of runes used (if staff equipped, no element rune) from ge, and price of item enchanted item not enchanted, and enable profit counter.
         //startCasting() (poll) - has designed click patterns, and fast clicking for bolts.
+
+
+
+            getitemsneeded()
+            if weapon equipped == instead of rune, remove rune from required items list, else keep it on
+            openBank();
+            if weapon equipped != rune, check if has staff in bank.
+            if has --> equip,
+            else, for each item in getitemsneeded, withdraw.
+            withdrawFromBank();
+            closeBank();
+            check that has all requirements (enough runes, items, etc)
+            startEnchant();
+
+
+            userLog = "Could not find the bank twice!";
+            logger.info(userLog);
+
+
+
+
+            need to change the runepowerrequirements list to items list
+            for each item in the list --> add to new list of items according to final Items i will need to make
+            (enums and according to valueof())
+            if staff doesnt exist --> add to list.
+
+            need to check if bankCurrentTab(1) = first or second tab!!
