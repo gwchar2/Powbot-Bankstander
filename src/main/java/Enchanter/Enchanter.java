@@ -21,7 +21,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
-import static Enchanter.bankopened.bankHelper;
+
+import static Enchanter.bankopened.bankHelper.getitemsneeded;
 import static Enchanter.bankopened.bankHelper.openBank;
 
 
