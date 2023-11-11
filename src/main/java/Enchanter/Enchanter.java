@@ -5,6 +5,7 @@ import Enchanter.helpers.checks;
 import Enchanter.Data.BankAreas;
 import Enchanter.Data.Enchantable;
 import org.powbot.api.Area;
+import org.powbot.api.Condition;
 import org.powbot.api.Tile;
 import org.powbot.api.requirement.RunePowerRequirement;
 import org.powbot.api.rt4.*;
@@ -98,12 +99,10 @@ public class Enchanter extends AbstractScript {
     }
     @Override
     public void poll() {
-    if (checks.atBank()){
-        userLog = "Got to the bank";
-        logger.info(userLog);
-    }
+    Condition.wait(checks::atBank,1000,1);
     openBank();
-    getitemsneeded();
+    //getRunesNeeded();
+    //getItemsNeeded();
     }
 
     /**

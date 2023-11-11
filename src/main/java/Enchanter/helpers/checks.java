@@ -56,7 +56,7 @@ public class checks extends Enchanter {
         }
         if (player.tile().equals(myBankTile)) return true;
         else {
-            logger.info("Something broke");
+            logger.info("Not on exact tile");
             return false;
         }
     }
