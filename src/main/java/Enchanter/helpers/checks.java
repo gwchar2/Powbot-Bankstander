@@ -16,7 +16,7 @@ public class checks extends Enchanter {
     public static final Logger logger = Logger.getLogger("Requirement checks : ");
 
     /**
-     * Checks the requirements needed / available from user.
+     * Checks to see if level required is lower than current level, and if current level is lower than "Stop Level"
      */
     public static boolean checkRequirements() {
         if (Skill.Magic.realLevel() >= enchantableEnum.getLevelReq() && Magic.Book.MODERN.name().compareTo(Magic.book().name()) == 0 && Skill.Magic.realLevel() <= maxLevel)
@@ -61,15 +61,19 @@ public class checks extends Enchanter {
         }
     }
 
+    /**
+     * Checks if the weapon equipped counts instead of a rune
+     * @return True if yes, False if no.
+     */
     public static boolean checkWeapon() {
         for (RunePowerRequirement it : Requirements) {
-            if (mySpell.name().contains("JEWELLERY") &&
-                    Equipment.itemAt(Equipment.Slot.MAIN_HAND).name().contains(it.getPower().name().toLowerCase())) {
+            //if (mySpell.name().contains("JEWELLERY") &&
+            if (Equipment.itemAt(Equipment.Slot.MAIN_HAND).name().contains(it.getPower().name().toLowerCase())) {
                 logger.info("Main Hand Weapon is instead of a rune! : " + Equipment.itemAt(Equipment.Slot.MAIN_HAND).name());
-                return false;
+                return true;
             }
         }
         logger.info("Need to check bank for a weapon");
-        return true;
+        return false;
     }
 }

@@ -1,23 +1,13 @@
 package Enchanter.bankopened;
 
 import org.powbot.api.Condition;
-import org.powbot.api.Point;
-import org.powbot.api.requirement.Requirement;
 import org.powbot.api.requirement.RunePowerRequirement;
-
-import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
-
 import org.powbot.api.rt4.*;
-import org.powbot.api.rt4.magic.Rune;
-import org.powbot.api.rt4.magic.Staff;
-import org.powbot.mobile.rscache.loader.ItemLoader;
 import org.powbot.mobile.script.ScriptManager;
 import static Enchanter.Enchanter.*;
 import static Enchanter.helpers.checks.atBank;
-import static Enchanter.helpers.checks.checkWeapon;
-import static org.powbot.dax.shared.helpers.BankHelper.openBank;
+
 
 public abstract class bankHelper {
 
@@ -29,9 +19,11 @@ public abstract class bankHelper {
     public static void withdrawFromBank(){
 
     }
-    public static void closeBank(){
 
-    }
+
+    /**
+     * Makes a list of required runes
+     */
     public static void castRequirements() {
         Requirements = mySpell.requirements()
                 .stream()
@@ -40,6 +32,10 @@ public abstract class bankHelper {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * If user is at the correct bank, opens it
+     * If not, walks to the bank and than opens it.
+     */
     public static void openBank() {
         userLog = "Opening the bank";
         if (Bank.opened()){
