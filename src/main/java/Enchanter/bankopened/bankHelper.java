@@ -1,13 +1,19 @@
 package Enchanter.bankopened;
 import Enchanter.helpers.checks;
 import org.powbot.api.Condition;
+import org.powbot.api.requirement.RunePowerRequirement;
 import org.powbot.api.rt4.*;
+import org.powbot.api.rt4.magic.Rune;
 import org.powbot.mobile.script.ScriptManager;
 import static Enchanter.Enchanter.*;
 import static Enchanter.helpers.checks.atBank;
+import static Enchanter.helpers.misc.removeRune;
+import static Enchanter.helpers.misc.wieldStaff;
 
 
 public abstract class bankHelper {
+    public static boolean withdrawnRunes = false;
+    public static boolean searchedStaff = false;
 
     /**
      * If user is at the correct bank, opens it
@@ -39,24 +45,37 @@ public abstract class bankHelper {
             openBank();
         }
     }
-    public static void getitemsneeded(){
-        int amountOfRuneSlots = Requirements.size();
-        int amountOfRoomForItem = 28-amountOfRuneSlots;
-
-
+    public static void getitemsneeded() {
 
     }
 
+    public static void withdrawRunes(){
+        if (Bank.open()) {
+            for (RunePowerRequirement it : Requirements) {
+                if (it != null) {
+                    String rune = it.getPower().name().toLowerCase() + "rune";
+                    rune = Character.toUpperCase(rune.charAt(0)) + rune.substring(1);
+                    if (Bank.stream().nameContains(rune).first().valid()) {
+                        Bank.withdraw(rune, Bank.Amount.ALL);
+                    }
+                    else //no such rune !! quit?.
+                }
+            }
+            withdrawnRunes = true;
+        }
+    }
     /**
      * If correct staff exists in bank, wield it, and removeRune().
      */
     public static void findCorrectStaff() {
+        if (searchedStaff) return; // If already ran this method once, no need to run again !!
         if (suitableWeapon){
             removeRune(Equipment.itemAt(Equipment.Slot.MAIN_HAND).name());
             logger.info("Removed correct rune from requirement list");
         }
         else {
-            logger.info("Searching for correct staff");
+            userLog = "Searching for correct staff";
+            logger.info(userLog);
             Bank.currentTab(0); // Goes to first tab
             Item staff = Bank.stream().nameContains("staff").first();
             Item airstaffBank = Bank.stream().name("Air battlestaff","Mystic air staff","Staff of air").first();
@@ -68,9 +87,12 @@ public abstract class bankHelper {
             Item waterstaffBank = Bank.stream().name("Water battlestaff", "Mystic water staff", "Staff of water").first();
             Item waterstaffInv = Inventory.stream().name("Water battlestaff", "Mystic water staff", "Staff of water").first();
             if(!staff.valid()) {
-                logger.info("No staff in bank!");
+                userLog = "No staff in bank!";
+                logger.info(userLog);
                 return;
             }
+            userLog = "Withdrawing staff";
+            logger.info(userLog);
             if (mySpell.name().contains("LEVEL_1")){
                 if (waterstaffBank.valid() || waterstaffInv.valid()){
                     if (waterstaffInv.valid()) {
@@ -184,20 +206,9 @@ public abstract class bankHelper {
                 logger.info("No staff in the bank!");
             }
         }
+        searchedStaff = true;
+    }
 
-    }
-    /**
-     * Removes rune from requirement list according to equipped weapon
-     * (Need to add special staffs like mud smoke etc)
-     */
-    public static void removeRune(String rune) {
-            Requirements.removeIf(it -> it.getPower().name().contains(rune));
-       // Requirements.removeIf(it -> Equipment.itemAt(Equipment.Slot.MAIN_HAND).name().contains(it.getPower().name().toLowerCase()));
-    }
-    public static void wieldStaff(Item item){
-        item.interact("Wield");
-        Condition.wait(() -> !item.valid(), 300, 10);
-    }
 }
 
 

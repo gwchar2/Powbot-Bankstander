@@ -1,6 +1,5 @@
 package Enchanter;
 
-import Enchanter.bankopened.bankHelper;
 import Enchanter.helpers.checks;
 import Enchanter.Data.BankAreas;
 import Enchanter.Data.Enchantable;
@@ -9,6 +8,7 @@ import org.powbot.api.Condition;
 import org.powbot.api.Tile;
 import org.powbot.api.requirement.RunePowerRequirement;
 import org.powbot.api.rt4.*;
+import org.powbot.api.rt4.magic.Rune;
 import org.powbot.api.rt4.walking.model.Skill;
 import org.powbot.api.script.AbstractScript;
 import org.powbot.api.script.OptionType;
@@ -24,7 +24,6 @@ import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import static Enchanter.bankopened.bankHelper.*;
-import static Enchanter.helpers.checks.atBank;
 
 
 @ScriptManifest(name = "Open Enchanter",
