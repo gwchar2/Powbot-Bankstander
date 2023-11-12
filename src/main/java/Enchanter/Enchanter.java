@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
-import static Enchanter.bankopened.bankHelper.getitemsneeded;
-import static Enchanter.bankopened.bankHelper.openBank;
+import static Enchanter.bankopened.bankHelper.*;
+import static Enchanter.helpers.checks.atBank;
 
 
 @ScriptManifest(name = "Open Enchanter",
@@ -58,7 +58,7 @@ public class Enchanter extends AbstractScript {
     public static List<RunePowerRequirement> Requirements;
     public static Enchantable enchantableEnum; //The enum method selected by user (Narrowed down to item name), implements all enchantable.
     protected static String className; // User input for class name
-    protected static String enumConstantName; // User input for enum constant name
+    public static String enumConstantName; // User input for enum constant name
     public static String bankName; // User input for bank name
     public static Magic.Spell mySpell; // Chosen spell
     public static Area bankArea; // The final bank area
@@ -68,7 +68,6 @@ public class Enchanter extends AbstractScript {
     public static boolean suitableWeapon;
     public static String userLog;
     public static int attemptCounter = 0;
-    public static List<Item> itemList;
 
     /**
      * Gets the data upon pressing Start.
@@ -87,10 +86,10 @@ public class Enchanter extends AbstractScript {
         logger.info("Item to enchant: " + enumConstantName + " Unenchanted ID: " + enchantableEnum.getUnenchantedID() + " Enchanted ID: " + enchantableEnum.getEnchantedID());
         logger.info("Level to stop: " + maxLevel);
         checks.checkRequirements();
-        bankHelper.castRequirements();
+        checks.castRequirements();
         Requirements.forEach(it -> logger.info("Rune: " + it.getPower() + " Amount: " + it.getAmount()));
-        suitableWeapon = checks.checkWeapon();
         myBankTile = BankAreas.valueOf(bankName).makeTile(bankName);
+        suitableWeapon = checks.checkWeapon();
         addPaint();
         //RunePowerRequirements.forEach(it -> amount.set(it.getAmount())); for each it in RunePowerReq list set(it.getAmount) to local int amount.
         //for (RunePowerRequirement requirement : RunePowerRequirements) {} Good for the withdraw from bank method !!
@@ -99,10 +98,9 @@ public class Enchanter extends AbstractScript {
     }
     @Override
     public void poll() {
-    Condition.wait(checks::atBank,1000,1);
-    openBank();
-    //getRunesNeeded();
-    //getItemsNeeded();
+        Condition.wait(checks::atBank,1000,1);
+        openBank();
+        findCorrectStaff();
     }
 
     /**

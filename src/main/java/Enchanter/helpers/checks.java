@@ -3,13 +3,14 @@ import Enchanter.Enchanter;
 import org.powbot.api.Condition;
 import org.powbot.api.requirement.RunePowerRequirement;
 import org.powbot.api.rt4.Equipment;
+import org.powbot.api.rt4.Item;
 import org.powbot.api.rt4.Magic;
 import org.powbot.api.rt4.Movement;
+import org.powbot.api.rt4.magic.Staff;
 import org.powbot.api.rt4.walking.model.Skill;
 import org.powbot.mobile.script.ScriptManager;
-
-import java.util.Locale;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class checks extends Enchanter {
 
@@ -26,6 +27,12 @@ public class checks extends Enchanter {
             ScriptManager.INSTANCE.stop();
         }
         return true;
+    }
+    /**
+     * Makes a list of required runes
+     */
+    public static void castRequirements() {
+        Requirements = mySpell.requirements().stream().filter(RunePowerRequirement.class::isInstance).map(RunePowerRequirement.class::cast).collect(Collectors.toList());
     }
 
     /**
@@ -66,9 +73,8 @@ public class checks extends Enchanter {
      * @return True if yes, False if no.
      */
     public static boolean checkWeapon() {
-        for (RunePowerRequirement it : Requirements) {
-            //if (mySpell.name().contains("JEWELLERY") &&
-            if (Equipment.itemAt(Equipment.Slot.MAIN_HAND).name().contains(it.getPower().name().toLowerCase())) {
+       for (RunePowerRequirement it : Requirements) {
+            if (Equipment.itemAt(Equipment.Slot.MAIN_HAND).name().toLowerCase().contains(it.getPower().name().toLowerCase())) {
                 logger.info("Main Hand Weapon is instead of a rune! : " + Equipment.itemAt(Equipment.Slot.MAIN_HAND).name());
                 return true;
             }
