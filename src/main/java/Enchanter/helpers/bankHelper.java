@@ -1,13 +1,12 @@
 package Enchanter.helpers;
-import com.fasterxml.jackson.databind.node.TextNode;
-import org.powbot.api.Condition;
-import org.powbot.api.requirement.Requirement;
-import org.powbot.api.requirement.RunePowerRequirement;
-import org.powbot.api.rt4.*;
-import org.powbot.api.rt4.magic.Rune;
-import org.powbot.mobile.script.ScriptManager;
 
-import javax.print.DocFlavor;
+import org.powbot.api.Condition;
+import org.powbot.api.requirement.RunePowerRequirement;
+import org.powbot.api.rt4.Bank;
+import org.powbot.api.rt4.Equipment;
+import org.powbot.api.rt4.Inventory;
+import org.powbot.api.rt4.Item;
+import org.powbot.mobile.script.ScriptManager;
 
 import static Enchanter.Enchanter.*;
 import static Enchanter.helpers.checks.atBank;
@@ -239,9 +238,10 @@ public abstract class bankHelper {
      */
     public static void withdrawItem(){
         userLog = "Withdrawing "+enumConstantName;
-        Long enchantableItem = Inventory.stream().id(enchantableEnum.getUnenchantedID()).count(); // Total amount of enchantable item in inventory
+        boolean enchantableItem = Inventory.stream().id(enchantableEnum.getUnenchantedID()).first().valid(); // Total amount of enchantable item in inventory
         if (!searchedStaff || !withdrawnRunes) return;
-        if (!mySpell.casting() && Bank.open() && enchantableItem==0){ // If you are done casting and no more enchantable item in inventory
+        if (!mySpell.casting() && !enchantableItem){ // If you are done casting and no more enchantable item in inventory
+            if (!Bank.opened()) Bank.open();
             if (mySpell.name().contains("LEVEL_1"))
                 Bank.depositAllExcept("Water rune", "Cosmic rune"); // bank all except runes
             else if (mySpell.name().contains("LEVEL_2"))
@@ -257,14 +257,14 @@ public abstract class bankHelper {
             else if (mySpell.name().contains("LEVEL_7"))
                 Bank.depositAllExcept("Cosmic rune", "Blood rune", "Soul rune"); // bank all except runes
             if (Bank.stream().id(enchantableEnum.getUnenchantedID()).first().valid() && Bank.stream().id(enchantableEnum.getUnenchantedID()).first().stackSize()>=28-Requirements.size()) { // If there are more of enchantable item in bank (Higher than minimum amount)
-                withdraw(enchantableEnum.getUnenchantedID(), 28-Requirements.size()); // Withdraw more.
+                withdraw(enchantableEnum.getUnenchantedID(), Inventory.emptySlotCount()); // Withdraw more.
             }
             else{ // If the item is not valid in bank OR if less than minimum amount
                 userLog = "No item to withdraw!";
                 ScriptManager.INSTANCE.stop();
             }
         }
-        else if (!mySpell.canCast() && Bank.open() && enchantableItem!=0){ // If not casting, bank open, and still have enchantables in inventory
+        else if (!mySpell.canCast() && Bank.open() && !enchantableItem){ // If not casting, bank open, and still have enchantables in inventory
             userLog = "No more runes! Depositing & Closing script.";
             Bank.depositInventory(); // Deposit everything and close the script.
             Condition.sleep(15000);

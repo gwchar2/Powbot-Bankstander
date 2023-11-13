@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
+import static Enchanter.enchantMethod.enchant;
 import static Enchanter.helpers.bankHelper.*;
 
 
@@ -103,6 +104,7 @@ public class Enchanter extends AbstractScript {
         withdrawRunes();
         Condition.wait(() -> mySpell.canCast(),150,10);
         withdrawItem();
+        enchant();
         // if out of the area, turn searchedStaff==false, withdrawnRunes==false
     }
 

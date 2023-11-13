@@ -3,8 +3,8 @@ package Enchanter.helpers;
 import org.powbot.api.Condition;
 import org.powbot.api.rt4.Equipment;
 import org.powbot.api.rt4.Item;
+import static Enchanter.Enchanter.*;
 
-import static Enchanter.Enchanter.Requirements;
 
 public class misc {
     /**
@@ -24,4 +24,6 @@ public class misc {
         item.interact("Wield");
         Condition.wait(() -> Equipment.itemAt(Equipment.Slot.MAIN_HAND).name().equals(item.name()), 1000, 10);
     }
+
+
 }
