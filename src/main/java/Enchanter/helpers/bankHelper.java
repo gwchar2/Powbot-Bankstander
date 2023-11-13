@@ -24,6 +24,7 @@ public abstract class bankHelper {
      * If user is at the correct bank, opens it
      * If not, walks to the bank and then opens it.
      * Equips correct staff and fixes requirement list.
+     * @return True if bank is opened, False if cant open the bank after multiple attempts
      */
     public static boolean openBank() {
         userLog = "Opening the bank";

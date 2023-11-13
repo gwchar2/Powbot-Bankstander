@@ -10,6 +10,7 @@ public class misc {
     /**
      * Removes rune from requirement list according to equipped weapon
      * (Need to add special staffs like mud smoke etc)
+     * @rune The name of the elemental rune used.
      */
     public static void removeRune(String rune) {
         Requirements.removeIf(it -> rune.toLowerCase().contains(it.getPower().name().toLowerCase()) || it.getPower().name().contains(rune));

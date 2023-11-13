@@ -18,6 +18,7 @@ public class checks extends Enchanter {
 
     /**
      * Checks to see if level required is lower than current level, and if current level is lower than "Stop Level"
+     * @return True when done checking the requirements
      */
     public static boolean checkRequirements() {
         if (Skill.Magic.realLevel() >= enchantableEnum.getLevelReq() && Magic.Book.MODERN.name().compareTo(Magic.book().name()) == 0 && Skill.Magic.realLevel() <= maxLevel)
