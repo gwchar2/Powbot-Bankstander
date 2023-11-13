@@ -1,14 +1,14 @@
 package Enchanter;
 
-import Enchanter.helpers.checks;
 import Enchanter.Data.BankAreas;
 import Enchanter.Data.Enchantable;
+import Enchanter.bankopened.bankHelper;
+import Enchanter.helpers.checks;
 import org.powbot.api.Area;
 import org.powbot.api.Condition;
 import org.powbot.api.Tile;
 import org.powbot.api.requirement.RunePowerRequirement;
 import org.powbot.api.rt4.*;
-import org.powbot.api.rt4.magic.Rune;
 import org.powbot.api.rt4.walking.model.Skill;
 import org.powbot.api.script.AbstractScript;
 import org.powbot.api.script.OptionType;
@@ -24,6 +24,7 @@ import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import static Enchanter.bankopened.bankHelper.*;
+import static org.powbot.dax.shared.helpers.BankHelper.openBank;
 
 
 @ScriptManifest(name = "Open Enchanter",
@@ -97,9 +98,13 @@ public class Enchanter extends AbstractScript {
     }
     @Override
     public void poll() {
-        Condition.wait(checks::atBank,1000,1);
-        openBank();
+        Condition.wait(checks::atBank,1000,10);
+        Condition.wait(bankHelper::openBank,1000,10);
         findCorrectStaff();
+        withdrawRunes();
+        Condition.wait(() -> mySpell.canCast(),150,10);
+        withdrawItem();
+        // if out of the area, turn searchedStaff==false, withdrawnRunes==false
     }
 
     /**

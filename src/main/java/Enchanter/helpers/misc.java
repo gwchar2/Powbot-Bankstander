@@ -1,6 +1,7 @@
 package Enchanter.helpers;
 
 import org.powbot.api.Condition;
+import org.powbot.api.rt4.Equipment;
 import org.powbot.api.rt4.Item;
 
 import static Enchanter.Enchanter.Requirements;
@@ -11,7 +12,7 @@ public class misc {
      * (Need to add special staffs like mud smoke etc)
      */
     public static void removeRune(String rune) {
-        Requirements.removeIf(it -> it.getPower().name().contains(rune));
+        Requirements.removeIf(it -> rune.toLowerCase().contains(it.getPower().name().toLowerCase()) || it.getPower().name().contains(rune));
     }
 
     /**
@@ -20,6 +21,6 @@ public class misc {
      */
     public static void wieldStaff(Item item){
         item.interact("Wield");
-        Condition.wait(() -> !item.valid(), 300, 10);
+        Condition.wait(() -> Equipment.itemAt(Equipment.Slot.MAIN_HAND).name().equals(item.name()), 1000, 10);
     }
 }

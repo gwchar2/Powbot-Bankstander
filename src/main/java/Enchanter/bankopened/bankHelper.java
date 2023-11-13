@@ -1,14 +1,19 @@
 package Enchanter.bankopened;
-import Enchanter.helpers.checks;
+import com.fasterxml.jackson.databind.node.TextNode;
 import org.powbot.api.Condition;
+import org.powbot.api.requirement.Requirement;
 import org.powbot.api.requirement.RunePowerRequirement;
 import org.powbot.api.rt4.*;
 import org.powbot.api.rt4.magic.Rune;
 import org.powbot.mobile.script.ScriptManager;
+
+import javax.print.DocFlavor;
+
 import static Enchanter.Enchanter.*;
 import static Enchanter.helpers.checks.atBank;
 import static Enchanter.helpers.misc.removeRune;
 import static Enchanter.helpers.misc.wieldStaff;
+import static org.powbot.api.rt4.Bank.withdraw;
 
 
 public abstract class bankHelper {
@@ -20,15 +25,15 @@ public abstract class bankHelper {
      * If not, walks to the bank and then opens it.
      * Equips correct staff and fixes requirement list.
      */
-    public static void openBank() {
+    public static boolean openBank() {
         userLog = "Opening the bank";
         if (Bank.opened()){
             userLog = "Bank is open";
-            return;
+            return true;
         }
         else if(Bank.inViewport()){
             Condition.wait(Bank::open, 50, 10);
-            return;
+            return true;
         }
         else if(!Bank.inViewport()){
             userLog = "You are not near the bank!";
@@ -44,34 +49,48 @@ public abstract class bankHelper {
             atBank();
             openBank();
         }
-    }
-    public static void getitemsneeded() {
-
+        return false;
     }
 
+    /**
+     * Withdraws the required runes to cast.
+     */
     public static void withdrawRunes(){
-        if (Bank.open()) {
+        if (Bank.open() && Bank.currentTab (0) && (!withdrawnRunes || !mySpell.canCast())) {
+            if (Inventory.isNotEmpty()) Condition.wait(Bank::depositInventory,300,10);
             for (RunePowerRequirement it : Requirements) {
                 if (it != null) {
-                    String rune = it.getPower().name().toLowerCase() + "rune";
+                    String rune = it.getPower().name().toLowerCase() + " rune";
                     rune = Character.toUpperCase(rune.charAt(0)) + rune.substring(1);
-                    if (Bank.stream().nameContains(rune).first().valid()) {
-                        Bank.withdraw(rune, Bank.Amount.ALL);
+                    userLog = "Withdrawing " + rune;
+                    if (!Inventory.stream().name(rune).first().valid() && Inventory.stream().name(rune).first().stackSize() < 28 * it.getAmount() && Bank.stream().name(rune).first().valid()) {
+                        withdraw(rune, Bank.Amount.ALL);
+                        String finalRune = rune;
+                        Condition.wait(() -> Inventory.stream().name(finalRune).first().valid(), 300, 10);
+                    } else {
+                        userLog = "No " + rune + " in the bank, pausing for 15 seconds";
+                        Condition.sleep(15000);
+                        ScriptManager.INSTANCE.stop();
+                        return;
                     }
-                    else //no such rune !! quit?.
                 }
             }
             withdrawnRunes = true;
         }
     }
+
     /**
      * If correct staff exists in bank, wield it, and removeRune().
      */
     public static void findCorrectStaff() {
         if (searchedStaff) return; // If already ran this method once, no need to run again !!
+        if (Inventory.isFull()) Bank.depositInventory();
         if (suitableWeapon){
             removeRune(Equipment.itemAt(Equipment.Slot.MAIN_HAND).name());
             logger.info("Removed correct rune from requirement list");
+            for (RunePowerRequirement its : Requirements){
+                System.out.println(its.getPower().name());
+            }
         }
         else {
             userLog = "Searching for correct staff";
@@ -99,7 +118,7 @@ public abstract class bankHelper {
                         wieldStaff(waterstaffInv);
                     }
                     else {
-                        Bank.withdraw(waterstaffBank, 1);
+                        withdraw(waterstaffBank, 1);
                         waterstaffInv = Inventory.stream().name("Water battlestaff", "Mystic water staff", "Staff of water").first();
                         waterstaffInv.interact("Wield");
                     }
@@ -113,7 +132,7 @@ public abstract class bankHelper {
                         airstaffInv.interact("Wield");
                     }
                     else if (airstaffBank.valid()){
-                        Bank.withdraw(airstaffBank,1);
+                        withdraw(airstaffBank,1);
                         airstaffInv = Inventory.stream().name("Air battlestaff", "Mystic air staff", "Staff of air").first();
                         airstaffInv.interact("Wield");
                     }
@@ -127,7 +146,7 @@ public abstract class bankHelper {
                         firestaffInv.interact("Wield");
                     }
                     else if (firestaffBank.valid()){
-                        Bank.withdraw(firestaffBank,1);
+                        withdraw(firestaffBank,1);
                         firestaffInv = Inventory.stream().name("Fire battlestaff", "Mystic fire staff", "Staff of fire").first();
                         firestaffInv.interact("Wield");
                     }
@@ -141,7 +160,7 @@ public abstract class bankHelper {
                         earthstaffInv.interact("Wield");
                     }
                     else if (earthstaffBank.valid()){
-                        Bank.withdraw(earthstaffBank,1);
+                        withdraw(earthstaffBank,1);
                         earthstaffInv = Inventory.stream().name("Earth battlestaff", "Mystic earth staff", "Staff of earth").first();
                         earthstaffInv.interact("Wield");
                     }
@@ -160,13 +179,13 @@ public abstract class bankHelper {
                         removeRune("WATER");
                     }
                     else if (earthstaffBank.valid()) {
-                        Bank.withdraw(earthstaffBank,1);
+                        withdraw(earthstaffBank,1);
                         earthstaffInv = Inventory.stream().name("Earth battlestaff", "Mystic earth staff", "Staff of earth").first();
                         earthstaffInv.interact("Wield");
                         removeRune("EARTH");
                     }
                     else if (waterstaffBank.valid()){
-                        Bank.withdraw(waterstaffBank,1);
+                        withdraw(waterstaffBank,1);
                         waterstaffInv = Inventory.stream().name("Water battlestaff", "Mystic water staff", "Staff of water").first();
                         waterstaffInv.interact("Wield");
                         removeRune("WATER");
@@ -185,13 +204,13 @@ public abstract class bankHelper {
                         removeRune("FIRE");
                     }
                     else if (earthstaffBank.valid()) {
-                        Bank.withdraw(earthstaffBank,1);
+                        withdraw(earthstaffBank,1);
                         earthstaffInv = Inventory.stream().name("Earth battlestaff", "Mystic earth staff", "Staff of earth").first();
                         earthstaffInv.interact("Wield");
                         removeRune("EARTH");
                     }
                     else if (firestaffBank.valid()){
-                        Bank.withdraw(firestaffBank,1);
+                        withdraw(firestaffBank,1);
                         firestaffInv = Inventory.stream().name("Fire battlestaff", "Mystic fire staff", "Staff of fire").first();
                         firestaffInv.interact("Wield");
                         removeRune("FIRE");
@@ -207,6 +226,43 @@ public abstract class bankHelper {
             }
         }
         searchedStaff = true;
+        if (Inventory.isNotEmpty()) Bank.depositInventory();
+    }
+
+    public static void withdrawItem(){
+        userLog = "Withdrawing "+enumConstantName;
+        Long enchantableItem = Inventory.stream().id(enchantableEnum.getUnenchantedID()).count(); // Total amount of enchantable item in inventory
+        if (!mySpell.casting() && Bank.open() && enchantableItem==0){ // If you are done casting and no more enchantable item in inventory
+            if (mySpell.name().contains("LEVEL_1"))
+                Bank.depositAllExcept("Water rune", "Cosmic rune"); // bank all except runes
+            else if (mySpell.name().contains("LEVEL_2"))
+                Bank.depositAllExcept( "Cosmic rune", "Air rune"); // bank all except runes
+            else if (mySpell.name().contains("LEVEL_3"))
+                Bank.depositAllExcept("Cosmic rune","Fire rune"); // bank all except runes
+            else if (mySpell.name().contains("LEVEL_4"))
+                Bank.depositAllExcept( "Cosmic rune", "Earth rune"); // bank all except runes
+            else if (mySpell.name().contains("LEVEL_5"))
+                Bank.depositAllExcept("Water rune", "Cosmic rune", "Earth rune"); // bank all except runes
+            else if (mySpell.name().contains("LEVEL_6"))
+                Bank.depositAllExcept( "Cosmic rune", "Fire rune", "Earth rune"); // bank all except runes
+            else if (mySpell.name().contains("LEVEL_7"))
+                Bank.depositAllExcept("Cosmic rune", "Blood rune", "Soul rune"); // bank all except runes
+            if (Bank.stream().id(enchantableEnum.getUnenchantedID()).first().valid() && Bank.stream().id(enchantableEnum.getUnenchantedID()).first().stackSize()>=28-Requirements.size()) { // If there are more of enchantable item in bank (Higher than minimum amount)
+                withdraw(enchantableEnum.getUnenchantedID(), 28-Requirements.size()); // Withdraw more.
+            }
+            else{ // If the item is not valid in bank OR if less than minimum amount
+                userLog = "No item to withdraw!";
+                ScriptManager.INSTANCE.stop();
+            }
+        }
+        else if (!mySpell.canCast() && Bank.open() && enchantableItem!=0){ // If not casting, bank open, and still have enchantables in inventory
+            userLog = "No more runes! Depositing & Closing script.";
+            Bank.depositInventory(); // Deposit everything and close the script.
+            Condition.sleep(15000);
+            ScriptManager.INSTANCE.stop();
+        }
+       // get the total amount of casts available & compare to total amount of item in bank
+       // get the price of runes used (if staff equipped, no element rune) from ge, and price of item enchanted item not enchanted, and enable profit counter.
     }
 
 }
