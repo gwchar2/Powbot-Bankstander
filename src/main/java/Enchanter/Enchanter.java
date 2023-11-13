@@ -2,7 +2,7 @@ package Enchanter;
 
 import Enchanter.Data.BankAreas;
 import Enchanter.Data.Enchantable;
-import Enchanter.bankopened.bankHelper;
+import Enchanter.helpers.bankHelper;
 import Enchanter.helpers.checks;
 import org.powbot.api.Area;
 import org.powbot.api.Condition;
@@ -23,8 +23,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
-import static Enchanter.bankopened.bankHelper.*;
-import static org.powbot.dax.shared.helpers.BankHelper.openBank;
+import static Enchanter.helpers.bankHelper.*;
 
 
 @ScriptManifest(name = "Open Enchanter",
@@ -136,7 +135,7 @@ public class Enchanter extends AbstractScript {
                    }
                })
                .trackSkill(Skill.Magic)
-               .trackInventoryItem(enchantableEnum.getEnchantedID()," Enchanted")
+               .trackInventoryItem(enchantableEnum.getEnchantedID(),"Enchants")
                .y(45)
                .x(40)
                .build();

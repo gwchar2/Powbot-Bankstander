@@ -43,8 +43,8 @@ https://github.com/PTYB?tab=repositories
 8. [✓] withdrawRunes() (takes the runes from runesNeededList)
 9. [✓] check for the item chosen, save total amount as int & withdraw 28 minus amount of runes in runesNeededList. 
              if item doesnt exist in bank, terminate script
-10. [] get the total amount of casts available & compare to total amount of item in bank
-11. [] get the price of runes used (if staff equipped, no element rune) from ge, and price of item enchanted item not enchanted, and enable profit counter.
+10. [✓] get the total amount of casts available & compare to total amount of item in bank
+11. [✓] get the price of runes used (if staff equipped, no element rune) from ge, and price of item enchanted item not enchanted, and enable profit counter.
 12. [] startCasting() - has designed click patterns, and fast clicking for bolts.
 
 

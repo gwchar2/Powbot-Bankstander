@@ -1,4 +1,4 @@
-package Enchanter.bankopened;
+package Enchanter.helpers;
 import com.fasterxml.jackson.databind.node.TextNode;
 import org.powbot.api.Condition;
 import org.powbot.api.requirement.Requirement;
@@ -56,6 +56,10 @@ public abstract class bankHelper {
      * Withdraws the required runes to cast.
      */
     public static void withdrawRunes(){
+        if (!searchedStaff) {
+            withdrawnRunes = false;
+            return;
+        }
         if (Bank.open() && Bank.currentTab (0) && (!withdrawnRunes || !mySpell.canCast())) {
             if (Inventory.isNotEmpty()) Condition.wait(Bank::depositInventory,300,10);
             for (RunePowerRequirement it : Requirements) {
@@ -229,9 +233,13 @@ public abstract class bankHelper {
         if (Inventory.isNotEmpty()) Bank.depositInventory();
     }
 
+    /**
+     * Withdraws the required amount of items to enchant
+     */
     public static void withdrawItem(){
         userLog = "Withdrawing "+enumConstantName;
         Long enchantableItem = Inventory.stream().id(enchantableEnum.getUnenchantedID()).count(); // Total amount of enchantable item in inventory
+        if (!searchedStaff || !withdrawnRunes) return;
         if (!mySpell.casting() && Bank.open() && enchantableItem==0){ // If you are done casting and no more enchantable item in inventory
             if (mySpell.name().contains("LEVEL_1"))
                 Bank.depositAllExcept("Water rune", "Cosmic rune"); // bank all except runes
