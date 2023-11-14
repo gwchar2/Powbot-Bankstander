@@ -32,11 +32,12 @@ public abstract class bankHelper {
             return true;
         }
         else if(Bank.inViewport()){
-            Condition.wait(Bank::open, 50, 10);
+            Condition.wait(Bank::open, 150, 10);
             return true;
         }
         else if(!Bank.inViewport()){
             userLog = "You are not near the bank!";
+            logger.info(userLog);
             if (attemptCounter == 2){
                 userLog = "Could not find the bank twice!";
                 logger.info(userLog);
@@ -67,12 +68,14 @@ public abstract class bankHelper {
                     String rune = it.getPower().name().toLowerCase() + " rune";
                     rune = Character.toUpperCase(rune.charAt(0)) + rune.substring(1);
                     userLog = "Withdrawing " + rune;
+                    logger.info(userLog);
                     if (!Inventory.stream().name(rune).first().valid() && Inventory.stream().name(rune).first().stackSize() < 28 * it.getAmount() && Bank.stream().name(rune).first().valid()) {
                         withdraw(rune, Bank.Amount.ALL);
                         String finalRune = rune;
                         Condition.wait(() -> Inventory.stream().name(finalRune).first().valid(), 300, 10);
                     } else {
                         userLog = "No " + rune + " in the bank, pausing for 15 seconds";
+                        logger.info(userLog);
                         Condition.sleep(15000);
                         ScriptManager.INSTANCE.stop();
                         return;
@@ -238,6 +241,7 @@ public abstract class bankHelper {
      */
     public static void withdrawItem(){
         userLog = "Withdrawing "+enumConstantName;
+        logger.info(userLog);
         boolean enchantableItem = Inventory.stream().id(enchantableEnum.getUnenchantedID()).first().valid(); // Total amount of enchantable item in inventory
         if (!searchedStaff || !withdrawnRunes) return;
         if (!mySpell.casting() && !enchantableItem){ // If you are done casting and no more enchantable item in inventory
@@ -261,11 +265,14 @@ public abstract class bankHelper {
             }
             else{ // If the item is not valid in bank OR if less than minimum amount
                 userLog = "No item to withdraw!";
+                logger.info(userLog);
+                Condition.sleep(15000);
                 ScriptManager.INSTANCE.stop();
             }
         }
         else if (!mySpell.canCast() && Bank.open() && !enchantableItem){ // If not casting, bank open, and still have enchantables in inventory
             userLog = "No more runes! Depositing & Closing script.";
+            logger.info(userLog);
             Bank.depositInventory(); // Deposit everything and close the script.
             Condition.sleep(15000);
             ScriptManager.INSTANCE.stop();

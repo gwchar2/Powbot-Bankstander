@@ -1,11 +1,14 @@
 package Enchanter.helpers;
+
 import Enchanter.Enchanter;
 import org.powbot.api.Condition;
 import org.powbot.api.requirement.RunePowerRequirement;
-import org.powbot.api.rt4.*;
-import org.powbot.api.rt4.magic.Staff;
+import org.powbot.api.rt4.Equipment;
+import org.powbot.api.rt4.Magic;
+import org.powbot.api.rt4.Movement;
 import org.powbot.api.rt4.walking.model.Skill;
 import org.powbot.mobile.script.ScriptManager;
+
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -41,13 +44,14 @@ public class checks extends Enchanter {
     public static boolean atBank() {
         if (bankArea.contains(player.tile())) {
             if (player.tile().equals(myBankTile)) {
+                Condition.wait(() -> player.inMotion(), 100, 15);
                 logger.info("User is at the: " + bankName + " Bank");
                 return true;
             } else {
                 userLog = "Need to walk to the bank booth";
                 logger.info(userLog);
                 Movement.step(myBankTile);
-                if (Condition.wait(() -> player.inMotion(), 50, 15)) {
+                if (Condition.wait(() -> player.inMotion(), 100, 15)) {
                     Condition.wait(() -> !player.inMotion(), 150, 25);
                 }
             }

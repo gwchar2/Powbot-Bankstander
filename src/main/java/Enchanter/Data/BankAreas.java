@@ -32,7 +32,7 @@ public enum BankAreas {
         Random random = new Random();
         i = random.nextInt(5);
         if (bankName.compareTo("GRAND_EXCHANGE") == 0) {
-            bankTiles = new Tile[]{new Tile(3167, 3488), new Tile(3162, 3488), new Tile(3162, 3490), new Tile(3166, 3492), new Tile(3167, 3490)};
+            bankTiles = new Tile[]{new Tile(3167, 3488), new Tile(3162, 3488), new Tile(3162, 3490), new Tile(3162, 3487), new Tile(3167, 3490)};
             return new Tile(bankTiles[i].getX(),bankTiles[i].getY());
         }
         else if (bankName.compareTo("VARROCK_WEST") == 0 ){

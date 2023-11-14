@@ -2,22 +2,19 @@ package Enchanter;
 
 import Enchanter.Data.BankAreas;
 import Enchanter.Data.Enchantable;
-import Enchanter.helpers.bankHelper;
 import Enchanter.helpers.checks;
 import org.powbot.api.Area;
 import org.powbot.api.Condition;
 import org.powbot.api.Tile;
 import org.powbot.api.requirement.RunePowerRequirement;
-import org.powbot.api.rt4.*;
+import org.powbot.api.rt4.Magic;
+import org.powbot.api.rt4.Player;
+import org.powbot.api.rt4.Players;
 import org.powbot.api.rt4.walking.model.Skill;
-import org.powbot.api.script.AbstractScript;
-import org.powbot.api.script.OptionType;
-import org.powbot.api.script.ScriptCategory;
-import org.powbot.api.script.ScriptConfiguration;
-import org.powbot.api.script.ScriptManifest;
-import org.powbot.api.script.ValueChanged;
+import org.powbot.api.script.*;
 import org.powbot.api.script.paint.Paint;
 import org.powbot.api.script.paint.PaintBuilder;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -25,6 +22,7 @@ import java.util.logging.Logger;
 
 import static Enchanter.enchantMethod.enchant;
 import static Enchanter.helpers.bankHelper.*;
+import static Enchanter.helpers.checks.atBank;
 
 
 @ScriptManifest(name = "Open Enchanter",
@@ -89,6 +87,7 @@ public class Enchanter extends AbstractScript {
         checks.castRequirements();
         Requirements.forEach(it -> logger.info("Rune: " + it.getPower() + " Amount: " + it.getAmount()));
         myBankTile = BankAreas.valueOf(bankName).makeTile(bankName);
+        System.out.println("Bank Tile: "+myBankTile.toString());
         suitableWeapon = checks.checkWeapon();
         addPaint();
         //RunePowerRequirements.forEach(it -> amount.set(it.getAmount())); for each it in RunePowerReq list set(it.getAmount) to local int amount.
@@ -98,8 +97,7 @@ public class Enchanter extends AbstractScript {
     }
     @Override
     public void poll() {
-        Condition.wait(checks::atBank,1000,10);
-        Condition.wait(bankHelper::openBank,1000,10);
+        if (atBank()) openBank();
         findCorrectStaff();
         withdrawRunes();
         Condition.wait(() -> mySpell.canCast(),150,10);
