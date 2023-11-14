@@ -1,4 +1,4 @@
-package Enchanter.helpers;
+package Enchanter.Helpers;
 
 import Enchanter.Enchanter;
 import org.powbot.api.Condition;

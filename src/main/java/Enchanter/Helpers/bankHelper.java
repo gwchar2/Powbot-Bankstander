@@ -1,4 +1,4 @@
-package Enchanter.helpers;
+package Enchanter.Helpers;
 
 import org.powbot.api.Condition;
 import org.powbot.api.requirement.RunePowerRequirement;
@@ -9,9 +9,9 @@ import org.powbot.api.rt4.Item;
 import org.powbot.mobile.script.ScriptManager;
 
 import static Enchanter.Enchanter.*;
-import static Enchanter.helpers.checks.atBank;
-import static Enchanter.helpers.misc.removeRune;
-import static Enchanter.helpers.misc.wieldStaff;
+import static Enchanter.Helpers.checks.atBank;
+import static Enchanter.Helpers.misc.removeRune;
+import static Enchanter.Helpers.misc.wieldStaff;
 import static org.powbot.api.rt4.Bank.withdraw;
 
 

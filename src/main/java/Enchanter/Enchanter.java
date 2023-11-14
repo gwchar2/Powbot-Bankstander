@@ -2,7 +2,7 @@ package Enchanter;
 
 import Enchanter.Data.BankAreas;
 import Enchanter.Data.Enchantable;
-import Enchanter.helpers.checks;
+import Enchanter.Helpers.checks;
 import org.powbot.api.Area;
 import org.powbot.api.Condition;
 import org.powbot.api.Tile;
@@ -21,8 +21,8 @@ import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import static Enchanter.enchantMethod.enchant;
-import static Enchanter.helpers.bankHelper.*;
-import static Enchanter.helpers.checks.atBank;
+import static Enchanter.Helpers.bankHelper.*;
+import static Enchanter.Helpers.checks.atBank;
 
 
 @ScriptManifest(name = "Open Enchanter",
