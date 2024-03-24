@@ -15,6 +15,11 @@ public class ConfigHandler extends Enchanter {
 
     /**
      * This method extracts the information received from the GUI.
+     * @param method - requested spell to cast
+     * @param item - requested item to enchant
+     * @param level - level to stop at
+     * @param spell - spell to be used
+     * @param bank - requested bank
      */
     public static void extractConfig(String method, String item, int level, String spell, String bank) {
         if (method.isEmpty() || method.equals("BOLT"))

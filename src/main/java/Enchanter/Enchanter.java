@@ -1,30 +1,28 @@
 package Enchanter;
 
-import Enchanter.bankopened.bankHelper;
-import Enchanter.helpers.checks;
 import Enchanter.Data.BankAreas;
 import Enchanter.Data.Enchantable;
+import Enchanter.Helpers.checks;
 import org.powbot.api.Area;
 import org.powbot.api.Condition;
 import org.powbot.api.Tile;
 import org.powbot.api.requirement.RunePowerRequirement;
-import org.powbot.api.rt4.*;
+import org.powbot.api.rt4.Magic;
+import org.powbot.api.rt4.Player;
+import org.powbot.api.rt4.Players;
 import org.powbot.api.rt4.walking.model.Skill;
-import org.powbot.api.script.AbstractScript;
-import org.powbot.api.script.OptionType;
-import org.powbot.api.script.ScriptCategory;
-import org.powbot.api.script.ScriptConfiguration;
-import org.powbot.api.script.ScriptManifest;
-import org.powbot.api.script.ValueChanged;
+import org.powbot.api.script.*;
 import org.powbot.api.script.paint.Paint;
 import org.powbot.api.script.paint.PaintBuilder;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
-import static Enchanter.bankopened.bankHelper.getitemsneeded;
-import static Enchanter.bankopened.bankHelper.openBank;
+import static Enchanter.enchantMethod.enchant;
+import static Enchanter.Helpers.bankHelper.*;
+import static Enchanter.Helpers.checks.atBank;
 
 
 @ScriptManifest(name = "Open Enchanter",
@@ -58,7 +56,7 @@ public class Enchanter extends AbstractScript {
     public static List<RunePowerRequirement> Requirements;
     public static Enchantable enchantableEnum; //The enum method selected by user (Narrowed down to item name), implements all enchantable.
     protected static String className; // User input for class name
-    protected static String enumConstantName; // User input for enum constant name
+    public static String enumConstantName; // User input for enum constant name
     public static String bankName; // User input for bank name
     public static Magic.Spell mySpell; // Chosen spell
     public static Area bankArea; // The final bank area
@@ -68,7 +66,6 @@ public class Enchanter extends AbstractScript {
     public static boolean suitableWeapon;
     public static String userLog;
     public static int attemptCounter = 0;
-    public static List<Item> itemList;
 
     /**
      * Gets the data upon pressing Start.
@@ -87,10 +84,11 @@ public class Enchanter extends AbstractScript {
         logger.info("Item to enchant: " + enumConstantName + " Unenchanted ID: " + enchantableEnum.getUnenchantedID() + " Enchanted ID: " + enchantableEnum.getEnchantedID());
         logger.info("Level to stop: " + maxLevel);
         checks.checkRequirements();
-        bankHelper.castRequirements();
+        checks.castRequirements();
         Requirements.forEach(it -> logger.info("Rune: " + it.getPower() + " Amount: " + it.getAmount()));
-        suitableWeapon = checks.checkWeapon();
         myBankTile = BankAreas.valueOf(bankName).makeTile(bankName);
+        System.out.println("Bank Tile: "+myBankTile.toString());
+        suitableWeapon = checks.checkWeapon();
         addPaint();
         //RunePowerRequirements.forEach(it -> amount.set(it.getAmount())); for each it in RunePowerReq list set(it.getAmount) to local int amount.
         //for (RunePowerRequirement requirement : RunePowerRequirements) {} Good for the withdraw from bank method !!
@@ -99,10 +97,13 @@ public class Enchanter extends AbstractScript {
     }
     @Override
     public void poll() {
-    Condition.wait(checks::atBank,1000,1);
-    openBank();
-    //getRunesNeeded();
-    //getItemsNeeded();
+        if (atBank()) openBank();
+        findCorrectStaff();
+        withdrawRunes();
+        Condition.wait(() -> mySpell.canCast(),150,10);
+        withdrawItem();
+        enchant();
+        // if out of the area, turn searchedStaff==false, withdrawnRunes==false
     }
 
     /**
@@ -134,7 +135,7 @@ public class Enchanter extends AbstractScript {
                    }
                })
                .trackSkill(Skill.Magic)
-               .trackInventoryItem(enchantableEnum.getEnchantedID()," Enchanted")
+               .trackInventoryItem(enchantableEnum.getEnchantedID(),"Enchants")
                .y(45)
                .x(40)
                .build();

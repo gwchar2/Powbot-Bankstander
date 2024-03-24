@@ -1,4 +1,5 @@
-package Enchanter.helpers;
+package Enchanter.Helpers;
+
 import Enchanter.Enchanter;
 import org.powbot.api.Condition;
 import org.powbot.api.requirement.RunePowerRequirement;
@@ -8,8 +9,8 @@ import org.powbot.api.rt4.Movement;
 import org.powbot.api.rt4.walking.model.Skill;
 import org.powbot.mobile.script.ScriptManager;
 
-import java.util.Locale;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class checks extends Enchanter {
 
@@ -17,6 +18,7 @@ public class checks extends Enchanter {
 
     /**
      * Checks to see if level required is lower than current level, and if current level is lower than "Stop Level"
+     * @return True when done checking the requirements
      */
     public static boolean checkRequirements() {
         if (Skill.Magic.realLevel() >= enchantableEnum.getLevelReq() && Magic.Book.MODERN.name().compareTo(Magic.book().name()) == 0 && Skill.Magic.realLevel() <= maxLevel)
@@ -27,6 +29,12 @@ public class checks extends Enchanter {
         }
         return true;
     }
+    /**
+     * Makes a list of required runes
+     */
+    public static void castRequirements() {
+        Requirements = mySpell.requirements().stream().filter(RunePowerRequirement.class::isInstance).map(RunePowerRequirement.class::cast).collect(Collectors.toList());
+    }
 
     /**
      * Checks if the user is at the bank
@@ -36,13 +44,14 @@ public class checks extends Enchanter {
     public static boolean atBank() {
         if (bankArea.contains(player.tile())) {
             if (player.tile().equals(myBankTile)) {
+                Condition.wait(() -> player.inMotion(), 100, 15);
                 logger.info("User is at the: " + bankName + " Bank");
                 return true;
             } else {
                 userLog = "Need to walk to the bank booth";
                 logger.info(userLog);
                 Movement.step(myBankTile);
-                if (Condition.wait(() -> player.inMotion(), 50, 15)) {
+                if (Condition.wait(() -> player.inMotion(), 100, 15)) {
                     Condition.wait(() -> !player.inMotion(), 150, 25);
                 }
             }
@@ -66,9 +75,8 @@ public class checks extends Enchanter {
      * @return True if yes, False if no.
      */
     public static boolean checkWeapon() {
-        for (RunePowerRequirement it : Requirements) {
-            //if (mySpell.name().contains("JEWELLERY") &&
-            if (Equipment.itemAt(Equipment.Slot.MAIN_HAND).name().contains(it.getPower().name().toLowerCase())) {
+       for (RunePowerRequirement it : Requirements) {
+            if (Equipment.itemAt(Equipment.Slot.MAIN_HAND).name().toLowerCase().contains(it.getPower().name().toLowerCase())) {
                 logger.info("Main Hand Weapon is instead of a rune! : " + Equipment.itemAt(Equipment.Slot.MAIN_HAND).name());
                 return true;
             }

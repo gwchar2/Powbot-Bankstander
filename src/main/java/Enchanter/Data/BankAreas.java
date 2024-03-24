@@ -2,11 +2,7 @@ package Enchanter.Data;
 
 import org.powbot.api.Area;
 import org.powbot.api.Tile;
-
-import java.util.Arrays;
 import java.util.Random;
-
-import static Enchanter.Enchanter.*;
 
 public enum BankAreas {
     DEFAULT_VALUE(3144,3510,0,3176,3480,0), //GE
@@ -36,7 +32,7 @@ public enum BankAreas {
         Random random = new Random();
         i = random.nextInt(5);
         if (bankName.compareTo("GRAND_EXCHANGE") == 0) {
-            bankTiles = new Tile[]{new Tile(3167, 3488), new Tile(3162, 3488), new Tile(3162, 3490), new Tile(3165, 3492), new Tile(3167, 3490)};
+            bankTiles = new Tile[]{new Tile(3167, 3488), new Tile(3162, 3488), new Tile(3162, 3490), new Tile(3162, 3487), new Tile(3167, 3490)};
             return new Tile(bankTiles[i].getX(),bankTiles[i].getY());
         }
         else if (bankName.compareTo("VARROCK_WEST") == 0 ){
